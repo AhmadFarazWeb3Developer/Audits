@@ -10,14 +10,18 @@ contract Victam {
         userBalance[msg.sender] += msg.value;
     }
 
+    // Follow CEI pattern
     function withdrawBalance() public {
+        // Checks
+        // Effects
         uint256 balance = userBalance[msg.sender];
-        console.log("Attack!");
-        (bool success, ) = msg.sender.call{value: balance}("");
+        userBalance[msg.sender] = 0;
+
+        //Interactions
+        (bool success, ) = msg.sender.call{value: balance}(""); // when there is no eth or data send the tnx reverts
         if (!success) {
             revert();
         }
-        userBalance[msg.sender] = 0;
     }
 }
 
