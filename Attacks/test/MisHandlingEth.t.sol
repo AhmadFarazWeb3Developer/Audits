@@ -54,6 +54,3 @@ contract MisHandlingEthTest is Test {
         vm.stopPrank();
     }
 }
-
-//       user eth :  1 000 000 000 000 000 000
-//   contract eth :  1000000000000000000
