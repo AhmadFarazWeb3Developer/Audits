@@ -14,8 +14,11 @@ You can use this to enter yourself multiple times, or yourself and a group of yo
 
 
 
-        uint64 public totalFees = 0;  //   decimal space  : 18446744073709551615
-       uint256 enterenceFee= 1 ETH     
+// overflow bug
+
+
+       uint64 public totalFees = 0;  //   decimal space  : 18446744073709551615
+       uint256 enterenceFee= 1 ETH   //   
 
        players = 4
 
@@ -29,4 +32,21 @@ You can use this to enter yourself multiple times, or yourself and a group of yo
        totalFees = totalFees + uint64(fee); 
 
 
-uint256 = decimal space = 15792089237316195423570985008687907853269984665640564039457584007913129639935 
+                                   18446744073709551615 
+       what if we collect more the 18.446_744_073_709_551_615 fee by increasing players or enterenceFee the cast to uint64 will overflow it?
+
+
+
+
+      uint64 my64Uint=type(uint64).max  
+      -> 18446744073709551615 or 18.446744073709551615
+
+      uint256 myEth= 20e18 
+      -> 20000000000000000000 or 20.000000000000000000
+
+      my64Uint=uint64(myEth)
+      -> 1553255926290448384 or 1.553255926290448384
+
+
+     now we can see that the unsafe casting overflow the values and for a profitable protocol its a big bug
+  

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
+// q why floting pragma version is used ?
 
-// q why variable solc version is used ?
 pragma solidity ^0.7.6;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -26,6 +26,8 @@ contract PuppyRaffle is ERC721, Ownable {
 
     // @audit-info s_storage variable name
     address[] public players;
+
+    // @audit-gas this should be immutable
     uint256 public raffleDuration;
     uint256 public raffleStartTime;
     address public previousWinner;
@@ -41,6 +43,8 @@ contract PuppyRaffle is ERC721, Ownable {
 
     // q private data are not completely private
     // Stats for the common puppy (pug)
+
+    // @audit-gas should be constant
     string private commonImageUri =
         "ipfs://QmSsYRx3LpDAb1GZQm7zZ1AuHZjfbPkD6J7s9r41xu1mf8";
     uint256 public constant COMMON_RARITY = 70;
@@ -75,6 +79,7 @@ contract PuppyRaffle is ERC721, Ownable {
         address _feeAddress,
         uint256 _raffleDuration
     ) ERC721("Puppy Raffle", "PR") {
+        //@audit-info some input validation for zero params
         entranceFee = _entranceFee;
         feeAddress = _feeAddress;
         raffleDuration = _raffleDuration;
@@ -106,6 +111,8 @@ contract PuppyRaffle is ERC721, Ownable {
         }
 
         // @audit looping through is DoS , incrementing gas cost for future
+        // @audit-gas uint256 playerLength=player.length;
+
         // Check for duplicates
         for (uint256 i = 0; i < players.length - 1; i++) {
             for (uint256 j = i + 1; j < players.length; j++) {
@@ -134,6 +141,10 @@ contract PuppyRaffle is ERC721, Ownable {
         players[playerIndex] = address(0);
 
         payable(msg.sender).sendValue(entranceFee);
+        // @audit-low
+        // if an event can be manipulated
+        // An event is missing
+        // An even is wrong
 
         emit RaffleRefunded(playerAddress);
     }
@@ -144,6 +155,8 @@ contract PuppyRaffle is ERC721, Ownable {
     function getActivePlayerIndex(
         address player
     ) external view returns (uint256) {
+
+
         for (uint256 i = 0; i < players.length; i++) {
             if (players[i] == player) {
                 return i;
@@ -176,17 +189,21 @@ contract PuppyRaffle is ERC721, Ownable {
 
         address winner = players[winnerIndex];
 
+        // @audit why not just address(this).balance
         uint256 totalAmountCollected = players.length * entranceFee;
+        // @audit-info Majic numbers
+        // There must be proper descrptors like global constant public variables
 
         uint256 prizePool = (totalAmountCollected * 80) / 100;
         uint256 fee = (totalAmountCollected * 20) / 100;
 
-        // audit
+        // @audit overflow -> unsafe cast of uint256 to uint64
         totalFees = totalFees + uint64(fee);
 
         uint256 tokenId = totalSupply();
 
         // We use a different RNG calculate from the winnerIndex to determine rarity
+        // @audit randomness
         uint256 rarity = uint256(
             keccak256(abi.encodePacked(msg.sender, block.difficulty))
         ) % 100;
@@ -202,7 +219,7 @@ contract PuppyRaffle is ERC721, Ownable {
         delete players;
 
         raffleStartTime = block.timestamp;
-        previousWinner = winner;
+        previousWinner = winner; // e does not matter much because its not used some where else
 
         (bool success, ) = winner.call{value: prizePool}("");
 
@@ -213,7 +230,7 @@ contract PuppyRaffle is ERC721, Ownable {
 
     /// @notice this function will withdraw the fees to the feeAddress
     function withdrawFees() external {
-        // @audit mishandling of Eth
+        // @audit mishandling of ETH !!!
         require(
             address(this).balance == uint256(totalFees),
             "PuppyRaffle: There are currently players active!"
@@ -221,6 +238,9 @@ contract PuppyRaffle is ERC721, Ownable {
 
         uint256 feesToWithdraw = totalFees;
         totalFees = 0;
+        // q what if the feeAddress if a smart contract with a fallback that will fail ?
+
+        // slither-disable-next-line arbitrary-send-eth
         (bool success, ) = feeAddress.call{value: feesToWithdraw}("");
         require(success, "PuppyRaffle: Failed to withdraw fees");
     }
@@ -233,6 +253,8 @@ contract PuppyRaffle is ERC721, Ownable {
     }
 
     /// @notice this function will return true if the msg.sender is an active player
+
+    // @audit-gas Is not used any where
     function _isActivePlayer() internal view returns (bool) {
         for (uint256 i = 0; i < players.length; i++) {
             if (players[i] == msg.sender) {
