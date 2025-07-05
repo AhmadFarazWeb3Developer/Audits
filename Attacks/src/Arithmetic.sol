@@ -21,3 +21,12 @@ contract Underflow {
         }
     }
 }
+
+contract PrecisionLoss {
+    uint256 public moneyToSplitUp = 255;
+    uint256 public users = 4;
+
+    function shareMoney() public view returns (uint256) {
+        return moneyToSplitUp / users;
+    }
+}

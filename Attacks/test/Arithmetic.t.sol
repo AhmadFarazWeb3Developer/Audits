@@ -2,15 +2,17 @@
 pragma solidity ^0.8.22;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Overflow, Underflow} from "../src/Arithmetic.sol";
+import {Overflow, Underflow, PrecisionLoss} from "../src/Arithmetic.sol";
 
 contract ArithmeticTest is Test {
     Overflow public overflow;
     Underflow public underflow;
+    PrecisionLoss public precisionLoss;
 
     function setUp() public {
         overflow = new Overflow();
         underflow = new Underflow();
+        precisionLoss = new PrecisionLoss();
     }
 
     function test_increment() public {
@@ -22,6 +24,10 @@ contract ArithmeticTest is Test {
 
     function test_decrement() public {
         underflow.decrement(1);
-        console.log(underflow.count());   
+        console.log(underflow.count());
+    }
+
+    function test_precisionLoss() public {
+        console.log(precisionLoss.shareMoney());
     }
 }
