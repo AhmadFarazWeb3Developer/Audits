@@ -1,0 +1,52 @@
+
+1. `address[] participants`: A list of addresses that enter. 
+You can use this to enter yourself multiple times, or yourself and a group of your friends.
+
+/// 2. Duplicate addresses are not allowed
+
+/// 3. Users are allowed to get a refund of their ticket & `value` if they call the `refund` function
+
+/// 4. Every X seconds, the raffle will be able to draw a winner and be minted a random puppy
+
+/// 5. The owner of the protocol will set a feeAddress to take a cut of the `value`, 
+       and the rest of the funds will be sent to the winner of the puppy.
+
+
+
+
+// overflow bug
+
+
+       uint64 public totalFees = 0;  //   decimal space  : 18446744073709551615
+       uint256 enterenceFee= 1 ETH   //   
+
+       players = 4
+
+       uint256 totalAmountCollected =  players * enterenceFee = 4e18 =    4,000,000,000,000,000,000
+
+       uint256 prizePool = (totalAmountCollected * 80) / 100; = 3.2e18 =  3,200,000,000,000,000,000
+
+       uint256 fee = (totalAmountCollected * 20) / 100; = 0.8e18 =        8,000,000,000,000,000,00 
+
+
+       totalFees = totalFees + uint64(fee); 
+
+
+                                   18446744073709551615 
+       what if we collect more the 18.446_744_073_709_551_615 fee by increasing players or enterenceFee the cast to uint64 will overflow it?
+
+
+
+
+      uint64 my64Uint=type(uint64).max  
+      -> 18446744073709551615 or 18.446744073709551615
+
+      uint256 myEth= 20e18 
+      -> 20000000000000000000 or 20.000000000000000000
+
+      my64Uint=uint64(myEth)
+      -> 1553255926290448384 or 1.553255926290448384
+
+
+     now we can see that the unsafe casting overflow the values and for a profitable protocol its a big bug
+  

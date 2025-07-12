@@ -1,0 +1,9 @@
+[submodule "Invariant-break/lib/forge-std"]
+    path = Invariant-break/lib/forge-std
+    url = https://github.com/foundry-rs/forge-std
+[submodule "Invariant-break/lib/openzeppelin-contracts"]
+    path = Invariant-break/lib/openzeppelin-contracts
+    url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "3-t-swap/lib/forge-std"]
+	path = 3-t-swap/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
