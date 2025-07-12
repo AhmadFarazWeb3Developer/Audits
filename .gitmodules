@@ -7,3 +7,12 @@
 [submodule "3-t-swap/lib/forge-std"]
 	path = 3-t-swap/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "4-thunder-loan/foundry-rs/forge-std/lib/forge-std"]
+	path = 4-thunder-loan/foundry-rs/forge-std/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "4-thunder-loan/lib/forge-std"]
+	path = 4-thunder-loan/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "4-thunder-loan/lib/openzeppelin-contracts"]
+	path = 4-thunder-loan/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
