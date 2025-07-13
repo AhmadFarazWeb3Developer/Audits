@@ -4,9 +4,9 @@ out = "out"
 libs = ["lib"]
 remappings = [
     '@openzeppelin/contracts=lib/openzeppelin-contracts/contracts',
-    '@openzeppelin/contracts-upgradeable=lib/openzeppelin-contracts-upgradeable/contracts',
+    "@openzeppelin/contracts-upgradeable/=lib/node_modules/@openzeppelin/contracts-upgradeable/"
 ]
-solc = '0.8.20'
+solc = '0.8.22'
 
 [fmt]
 bracket_spacing = true
