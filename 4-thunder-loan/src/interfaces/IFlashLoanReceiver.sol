@@ -11,10 +11,9 @@ import {IThunderLoan} from "./IThunderLoan.sol";
  */
 
 interface IFlashLoanReceiver {
-
-    // q is the token, the token that's being borrowed ?
-    // @audit where the natspec ?? 
-    // q amount is the amount of tokens ?
+    // q is the token, the token that's being borrowed ? Yes!
+    // @audit where the natspec ??
+    // q amount is the amount of tokens ? Yes!
     function executeOperation(
         address token,
         uint256 amount,

@@ -162,13 +162,16 @@ contract ThunderLoan is
         IERC20 token,
         uint256 amountOfAssetToken
     ) external revertIfZero(amountOfAssetToken) revertIfNotAllowedToken(token) {
-    
         AssetToken assetToken = s_tokenToAssetToken[token];
-    
+
         uint256 exchangeRate = assetToken.getExchangeRate();
         if (amountOfAssetToken == type(uint256).max) {
             amountOfAssetToken = assetToken.balanceOf(msg.sender);
         }
+
+        // 1e18 * 1e18 / 1e18= 1e18;
+        // 1e18 * 2e18 / 1e18= 2e18;
+        // 1e6 (USDC 6 decimal) * 2e18 / 1e18= 2e6;
 
         uint256 amountUnderlying = (amountOfAssetToken * exchangeRate) /
             assetToken.EXCHANGE_RATE_PRECISION();
@@ -177,23 +180,26 @@ contract ThunderLoan is
         assetToken.transferUnderlyingTo(msg.sender, amountUnderlying);
     }
 
+    // @audit-info , no natspc ??
+
     function flashloan(
-        address receiverAddress,
-        IERC20 token,
-        uint256 amount,
-        bytes calldata params
+        address receiverAddress, // e the address to get the flash loaned tokens
+        IERC20 token, // e the ERC20 to borrow
+        uint256 amount, //  e the amount to borrow
+        bytes calldata params // e the parameter to call the receiverAddress with
     ) external revertIfZero(amount) revertIfNotAllowedToken(token) {
         AssetToken assetToken = s_tokenToAssetToken[token];
-        uint256 startingBalance = IERC20(token).balanceOf(address(assetToken));
 
+        uint256 startingBalance = IERC20(token).balanceOf(address(assetToken));
         if (amount > startingBalance) {
             revert ThunderLoan__NotEnoughTokenBalance(startingBalance, amount);
         }
 
+        // e making sure the recevierAddress is a smartContract
         if (receiverAddress.code.length == 0) {
             revert ThunderLoan__CallerIsNotContract();
         }
-
+        // e this is probably the fee of the flash loan that whales will get
         uint256 fee = getCalculatedFee(token, amount);
         // slither-disable-next-line reentrancy-vulnerabilities-2 reentrancy-vulnerabilities-3
 
@@ -224,6 +230,7 @@ contract ThunderLoan is
         );
 
         uint256 endingBalance = token.balanceOf(address(assetToken));
+
         if (endingBalance < startingBalance + fee) {
             revert ThunderLoan__NotPaidBack(
                 startingBalance + fee,
@@ -233,6 +240,8 @@ contract ThunderLoan is
         s_currentlyFlashLoaning[token] = false;
     }
 
+    // e this is what the contract expects users to repay using
+    // e users could just call transfer
     function repay(IERC20 token, uint256 amount) public {
         if (!s_currentlyFlashLoaning[token]) {
             revert ThunderLoan__NotCurrentlyFlashLoaning();
@@ -278,14 +287,20 @@ contract ThunderLoan is
     }
 
     // @audit-info where is the natspec??
-    // is this calculating the fees of the flash loans in the deposit ???
+    // is this calculating the fees of the flash loans in the deposit ??? Yes
 
+    // how its calculating the fee?
+
+    // @param amount the amount being borrowed
+    // @param token the token being borrowed
     function getCalculatedFee(
         IERC20 token,
         uint256 amount
     ) public view returns (uint256 fee) {
         //slither-disable-next-line divide-before-multiply
 
+        // e so THIS is why we need Tswap!
+        // q is this correct ?
         uint256 valueOfBorrowedToken = (amount *
             getPriceInWeth(address(token))) / s_feePrecision;
 
