@@ -304,6 +304,11 @@ contract ThunderLoan is
 
         // e so THIS is why we need Tswap!
         // q is this correct ?
+
+        // 1 USDC == 0.1 WETH
+        // 1 USDC + 0.003 WETH
+        // 1 USDC + 0.003 USDC????
+        // @audit-high if the fee is going to be in the token, then the value should reflect that
         uint256 valueOfBorrowedToken = (amount *
             getPriceInWeth(address(token))) / s_feePrecision;
 
