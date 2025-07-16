@@ -5,13 +5,7 @@ const INFURA_SEPOLIA_URL = process.env.SEPOLIA_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 module.exports = {
-  solidity: "0.8.17",
+  solidity: "0.8.22",
   defaultNetwork: "hardhat",
-  networks: {
-    sepolia: {
-      url: INFURA_SEPOLIA_URL,
-      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
-      chainId: 11155111,
-    },
-  },
+  networks: {},
 };

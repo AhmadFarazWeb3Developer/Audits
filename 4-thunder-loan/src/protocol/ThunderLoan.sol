@@ -49,7 +49,7 @@ contract ThunderLoan is
 
     // The fee in WEI, it should have 18 decimals. Each flash loan takes a flat fee of the token price.
     // @audit-info this should be constant or immutable
-    uint256 private s_feePrecision;
+    uint256 private s_feePrecision; // @auditinfo this should be constant/immutable
     uint256 private s_flashLoanFee; // 0.3% ETH fee
 
     mapping(IERC20 token => bool currentlyFlashLoaning)
@@ -145,9 +145,12 @@ contract ThunderLoan is
 
         // @audit-follow up,this seems sus
         // q why we are calculating the fees of the flash loans in the deposit ???
+
+        // @audit-high we've got em!!!
+        // We shouldn't be udating the exchange rate here!
         uint256 calculatedFee = getCalculatedFee(token, amount);
-        // why we are updating the exchange rate ???
         assetToken.updateExchangeRate(calculatedFee);
+
         // e when a liquidity provider deposits, the money sits in the assetToken contract
         token.safeTransferFrom(msg.sender, address(assetToken), amount);
     }
