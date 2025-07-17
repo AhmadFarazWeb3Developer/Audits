@@ -245,6 +245,8 @@ contract ThunderLoan is
 
     // e this is what the contract expects users to repay using
     // e users could just call transfer
+
+    // @audit-low you can't user repay to repy a flash loan inside another flash loan
     function repay(IERC20 token, uint256 amount) public {
         if (!s_currentlyFlashLoaning[token]) {
             revert ThunderLoan__NotCurrentlyFlashLoaning();
@@ -302,13 +304,17 @@ contract ThunderLoan is
     ) public view returns (uint256 fee) {
         //slither-disable-next-line divide-before-multiply
 
+        // q Does two different swaping protocols has different price for same token ? Yes
+
         // e so THIS is why we need Tswap!
         // q is this correct ?
 
         // 1 USDC == 0.1 WETH
         // 1 USDC + 0.003 WETH
         // 1 USDC + 0.003 USDC????
+
         // @audit-high if the fee is going to be in the token, then the value should reflect that
+
         uint256 valueOfBorrowedToken = (amount *
             getPriceInWeth(address(token))) / s_feePrecision;
 
