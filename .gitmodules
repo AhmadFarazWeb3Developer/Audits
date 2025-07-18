@@ -16,3 +16,6 @@
 [submodule "4-thunder-loan/lib/openzeppelin-contracts"]
 	path = 4-thunder-loan/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "5-boss-bridge/lib/forge-std"]
+	path = 5-boss-bridge/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
