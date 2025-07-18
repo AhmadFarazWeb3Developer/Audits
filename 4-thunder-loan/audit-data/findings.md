@@ -75,6 +75,75 @@ function testRedeemAfterLoan() public setAllowedToken hasDeposits {
     }
 ```
 
+### [H-2] Mixing up varibales location causes storage collisions in `ThunderLoan::s_flashLoanFee` and `ThunderLoan::s_currentlyFlashLoaning`, freezing protocol
+
+**Description:** `ThunderLoan.sol` has two varibales in the following order:
+
+```javascript
+  
+    uint256 private s_feePrecision; 
+    uint256 private s_flashLoanFee; 
+
+```
+
+However, the upgraded contract `ThunderLoanUpgraded.sol` has them in a different order:
+
+```javascript
+
+    uint256 private s_flashLoanFee; 
+    uint256 public constant FEE_PRECISION = 1e18;
+```
+
+Due to how solidity storage works, after the upgrade the `s_flashLoanFee` will have the value of `s_feePrecision`, You cannot adjust the position of storage varibales, and removing storage varibales for constant varibales, breaks the storage location as well.
+
+**Impact:** After the upgrade, the `s_flashLoanFee` wil have the value of `s_feePrecision`. This means that users who take out flash loans right after an upgrade will be charged the wrong fee.
+
+Most importantly, the `s_currentlyFlashLoaning` mapping with storage in the wrong storage solt.
+
+**Proof of Concept:**
+
+<details>
+<summary> POC</summary>
+
+Place the following into `ThunderLoanTest.t.sol`.
+
+```javascript
+
+import {ThunderLoanUpgraded} from "../../src/upgradedProtocols/ThunderLoanUpgraded.sol";
+.
+.
+.
+function testUpgradeBreaks() public {
+        uint256 feeBeforeUpgrade = thunderLoan.getFee();
+        vm.startPrank(thunderLoan.owner());
+
+        ThunderLoanUpgraded upgraded = new ThunderLoanUpgraded();
+
+        thunderLoan.upgradeToAndCall(address(upgraded), "");
+        uint256 feeAfterUpgrade = thunderLoan.getFee();
+        vm.stopPrank();
+        console2.log("Fee Before : ", feeBeforeUpgrade);
+        console2.log("Fee After : ", feeAfterUpgrade);
+
+        assert(feeBeforeUpgrade != feeAfterUpgrade);
+    }
+
+```
+
+You can also see the storage layout difference by running `forge inspect ThunderLoan storage` and `forge inspect ThunderLoanUpgraded storage`
+</details>
+
+**Recommended Migitation:** If you must remove the storage varibale, leave  it as blan as to not mess up the storage solts.
+
+```diff
+-    uint256 private s_flashLoanFee; 
+-    uint256 public constant FEE_PRECISION = 1e18;
++    uint256 private s_blank;
++    uint256 private s_flashLoanFee; 
++    uint256 public constant FEE_PRECISION = 1e18;
+
+```
+
 ### [M-1] Using TSwap as price oracle leads to price and oracle manipulation attacks
 
 **Description:** The TSwap protocol is a constant product formula based AMM (automated market maker). The price of a token is determined by how many reserves are on either side of the pool. Because of this, it is easy for malicious users to manipulate the price of token by buying or selling a large amount of the token in the same transaction, essentially ignoring protocol fees.
@@ -96,6 +165,7 @@ The following all happens in 1 transaction.
 @>      return ITSwapPool(swapPoolOfToken).getPriceOfOnePoolTokenInWeth();
     }
 ```
+
     3. The user then repays the first flash loan, and then repays the second flash loan.
 
 I have created a proof of code located in my `audit-data` folder. It is too large to include here.
