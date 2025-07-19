@@ -19,3 +19,6 @@
 [submodule "5-boss-bridge/lib/forge-std"]
 	path = 5-boss-bridge/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "5-boss-bridge/lib/openzeppelin-contracts"]
+	path = 5-boss-bridge/lib/openzeppelin-contracts
+	url = https://github.com/lib/OpenZeppelin/openzeppelin-contracts
