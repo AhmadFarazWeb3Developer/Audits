@@ -27,8 +27,7 @@ import {L1Vault} from "./L1Vault.sol";
 contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
-
-// @audit-info should be constant
+    // @audit-info should be constant
     uint256 public DEPOSIT_LIMIT = 100_000 ether;
 
     IERC20 public immutable token; // e one brdge per token
@@ -77,6 +76,9 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
     // Bob: depositTokensToL2(from : Alice, l2Recipient: Bob, all her money!!)
     // @audit-high
     // if a user approve the bridge, any other user can steal their funds.
+
+    // @audit-high if the vault approvied the bridge.... can a use steal funds from the  vault ?
+
     function depositTokensToL2(
         address from,
         address l2Recipient,
@@ -103,6 +105,8 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
      * @param r The r value of the signature
      * @param s The s value of the signature
      */
+
+    // some times allowing users via signatures provide couple of benifits , like gasless transaction
     function withdrawTokensToL1(
         address to,
         uint256 amount,
@@ -133,6 +137,7 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
      * @param s The s value of the signature
      * @param message The message/data to be sent to L1 (can be blank)
      */
+
     function sendToL1(
         uint8 v,
         bytes32 r,
@@ -155,7 +160,7 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
             (address, uint256, bytes)
         );
 
-        // q slither said is it bad ?
+        // q slither said this is bad, is that ok ?
         (bool success, ) = target.call{value: value}(data);
         if (!success) {
             revert L1BossBridge__CallFailed();
