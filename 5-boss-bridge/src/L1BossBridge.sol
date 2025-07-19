@@ -27,11 +27,14 @@ import {L1Vault} from "./L1Vault.sol";
 contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
+
+// @audit-info should be constant
     uint256 public DEPOSIT_LIMIT = 100_000 ether;
 
-    IERC20 public immutable token;
+    IERC20 public immutable token; // e one brdge per token
     L1Vault public immutable vault;
-    mapping(address account => bool isSigner) public signers;
+
+    mapping(address account => bool isSigner) public signers; // users who can "send" a token from L2 -> L1
 
     error L1BossBridge__DepositLimitReached();
     error L1BossBridge__Unauthorized();
@@ -55,6 +58,7 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
         _unpause();
     }
 
+    // q hey what happens if we disable an account mid-flight ?
     function setSigner(address account, bool enabled) external onlyOwner {
         signers[account] = enabled;
     }
@@ -68,6 +72,11 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
      * @param l2Recipient The address of the user who will receive the tokens on L2
      * @param amount The amount of tokens to deposit
      */
+
+    // Alice: approve token -> bridge
+    // Bob: depositTokensToL2(from : Alice, l2Recipient: Bob, all her money!!)
+    // @audit-high
+    // if a user approve the bridge, any other user can steal their funds.
     function depositTokensToL2(
         address from,
         address l2Recipient,
@@ -79,6 +88,7 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
         token.safeTransferFrom(from, address(vault), amount);
 
         // Our off-chain service picks up this event and mints the corresponding tokens on L2
+        // @audit-info should follow CEI
         emit Deposit(from, l2Recipient, amount);
     }
 
@@ -145,6 +155,7 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
             (address, uint256, bytes)
         );
 
+        // q slither said is it bad ?
         (bool success, ) = target.call{value: value}(data);
         if (!success) {
             revert L1BossBridge__CallFailed();
