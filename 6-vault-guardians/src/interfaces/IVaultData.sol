@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
+// e used for distribute the user assest accross platforms
+
+// q can user directly invest without hiring guradian ?
+// q can gurdian steal money ?
+// q who can contribute to the DAO ?
+// is there any way to avoid malicious guardian or user enter the vault ?
+
 interface IVaultData {
     /**
      * @notice The ratio of vault's underlying asset tokens to invest is set by the vault guardian and is stored in this struct
