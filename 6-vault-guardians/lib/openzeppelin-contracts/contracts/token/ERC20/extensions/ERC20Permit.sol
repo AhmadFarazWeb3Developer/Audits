@@ -64,6 +64,7 @@ abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712, Nonces {
         _approve(owner, spender, value);
     }
 
+    // q if its auto increamting why we are not using that from ERC 2612?
     /// @inheritdoc IERC20Permit
     function nonces(address owner) public view virtual override(IERC20Permit, Nonces) returns (uint256) {
         return super.nonces(owner);

@@ -19,6 +19,8 @@ contract VaultGuardianToken is ERC20, ERC20Permit, ERC20Votes, Ownable {
     {}
 
     // The following functions are overrides required by Solidity.
+    // q is this used for transfering tokens ?
+    // q is approval needed ?
     function _update(
         address from,
         address to,
@@ -27,6 +29,11 @@ contract VaultGuardianToken is ERC20, ERC20Permit, ERC20Votes, Ownable {
         super._update(from, to, value);
     }
 
+    // q who will update this nonces ?
+    // q is it prone to reply attack?
+
+    // q we are implementing again this , its alreay in ERC20Permit.sol ?
+    // q why are not using it directly ?
     function nonces(
         address ownerOfNonce
     ) public view override(ERC20Permit, Nonces) returns (uint256) {
