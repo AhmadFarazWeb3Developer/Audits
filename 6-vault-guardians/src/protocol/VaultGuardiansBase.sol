@@ -24,6 +24,9 @@
  * |_| _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _  _ |_|
  * |_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_||_|
  */
+
+
+
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
@@ -58,9 +61,12 @@ contract VaultGuardiansBase is AStaticTokenData, IVaultData {
     /*//////////////////////////////////////////////////////////////
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
-    address private immutable i_aavePool;
+
+
+    address private immutable i_aavePool;   
     address private immutable i_uniswapV2Router;
     VaultGuardianToken private immutable i_vgToken;
+
 
     uint256 private constant GUARDIAN_FEE = 0.1 ether;
 
@@ -101,7 +107,10 @@ contract VaultGuardiansBase is AStaticTokenData, IVaultData {
         address tokenOne, // USDC
         address tokenTwo, // LINK
         address vgToken
+        
     ) AStaticTokenData(weth, tokenOne, tokenTwo) {
+
+        // e only there tokens are allowed 
         s_isApprovedToken[weth] = true;
         s_isApprovedToken[tokenOne] = true;
         s_isApprovedToken[tokenTwo] = true;

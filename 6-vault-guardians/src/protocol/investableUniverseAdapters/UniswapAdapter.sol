@@ -6,6 +6,8 @@ import {IUniswapV2Factory} from "../../vendor/IUniswapV2Factory.sol";
 import {AStaticUSDCData, IERC20} from "../../abstract/AStaticUSDCData.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+// e Vault to invest in and divest from Uniswap V2 liquidity pools (by vault guardians)
+
 contract UniswapAdapter is AStaticUSDCData {
     error UniswapAdapter__TransferFailed();
 
@@ -16,12 +18,23 @@ contract UniswapAdapter is AStaticUSDCData {
 
     address[] private s_pathArray;
 
-    event UniswapInvested(uint256 tokenAmount, uint256 wethAmount, uint256 liquidity);
+    event UniswapInvested(
+        uint256 tokenAmount,
+        uint256 wethAmount,
+        uint256 liquidity
+    );
     event UniswapDivested(uint256 tokenAmount, uint256 wethAmount);
 
-    constructor(address uniswapRouter, address weth, address tokenOne) AStaticUSDCData(weth, tokenOne) {
+    // e can pass the factroy mainnet address  "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f" of either extract it from router factory
+    constructor(
+        address uniswapRouter, // 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D mainnet
+        address weth,
+        address tokenOne
+    ) AStaticUSDCData(weth, tokenOne) {
         i_uniswapRouter = IUniswapV2Router01(uniswapRouter);
-        i_uniswapFactory = IUniswapV2Factory(IUniswapV2Router01(i_uniswapRouter).factory());
+        i_uniswapFactory = IUniswapV2Factory(
+            IUniswapV2Router01(i_uniswapRouter).factory()
+        );
     }
 
     // slither-disable-start reentrancy-eth
@@ -35,9 +48,13 @@ contract UniswapAdapter is AStaticUSDCData {
      * @param token The vault's underlying asset token
      * @param amount The amount of vault's underlying asset token to use for the investment
      */
+
+    // q where does this i_weth come from ?
     function _uniswapInvest(IERC20 token, uint256 amount) internal {
         IERC20 counterPartyToken = token == i_weth ? i_tokenOne : i_weth;
+
         // We will do half in WETH and half in the token
+
         uint256 amountOfTokenToSwap = amount / 2;
         // the path array is supplied to the Uniswap router, which allows us to create swap paths
         // in case a pool does not exist for the input token and the output token
@@ -47,7 +64,10 @@ contract UniswapAdapter is AStaticUSDCData {
         // the element at index 1 is the address of the output token
         s_pathArray = [address(token), address(counterPartyToken)];
 
-        bool succ = token.approve(address(i_uniswapRouter), amountOfTokenToSwap);
+        bool succ = token.approve(
+            address(i_uniswapRouter),
+            amountOfTokenToSwap
+        );
         if (!succ) {
             revert UniswapAdapter__TransferFailed();
         }
@@ -63,22 +83,29 @@ contract UniswapAdapter is AStaticUSDCData {
         if (!succ) {
             revert UniswapAdapter__TransferFailed();
         }
-        succ = token.approve(address(i_uniswapRouter), amountOfTokenToSwap + amounts[0]);
+        succ = token.approve(
+            address(i_uniswapRouter),
+            amountOfTokenToSwap + amounts[0]
+        );
         if (!succ) {
             revert UniswapAdapter__TransferFailed();
         }
 
         // amounts[1] should be the WETH amount we got back
-        (uint256 tokenAmount, uint256 counterPartyTokenAmount, uint256 liquidity) = i_uniswapRouter.addLiquidity({
-            tokenA: address(token),
-            tokenB: address(counterPartyToken),
-            amountADesired: amountOfTokenToSwap + amounts[0],
-            amountBDesired: amounts[1],
-            amountAMin: 0,
-            amountBMin: 0,
-            to: address(this),
-            deadline: block.timestamp
-        });
+        (
+            uint256 tokenAmount,
+            uint256 counterPartyTokenAmount,
+            uint256 liquidity
+        ) = i_uniswapRouter.addLiquidity({
+                tokenA: address(token),
+                tokenB: address(counterPartyToken),
+                amountADesired: amountOfTokenToSwap + amounts[0],
+                amountBDesired: amounts[1],
+                amountAMin: 0,
+                amountBMin: 0,
+                to: address(this),
+                deadline: block.timestamp
+            });
         emit UniswapInvested(tokenAmount, counterPartyTokenAmount, liquidity);
     }
 
@@ -88,18 +115,22 @@ contract UniswapAdapter is AStaticUSDCData {
      * @param token The vault's underlying asset token
      * @param liquidityAmount The amount of LP tokens to burn
      */
-    function _uniswapDivest(IERC20 token, uint256 liquidityAmount) internal returns (uint256 amountOfAssetReturned) {
+    function _uniswapDivest(
+        IERC20 token,
+        uint256 liquidityAmount
+    ) internal returns (uint256 amountOfAssetReturned) {
         IERC20 counterPartyToken = token == i_weth ? i_tokenOne : i_weth;
 
-        (uint256 tokenAmount, uint256 counterPartyTokenAmount) = i_uniswapRouter.removeLiquidity({
-            tokenA: address(token),
-            tokenB: address(counterPartyToken),
-            liquidity: liquidityAmount,
-            amountAMin: 0,
-            amountBMin: 0,
-            to: address(this),
-            deadline: block.timestamp
-        });
+        (uint256 tokenAmount, uint256 counterPartyTokenAmount) = i_uniswapRouter
+            .removeLiquidity({
+                tokenA: address(token),
+                tokenB: address(counterPartyToken),
+                liquidity: liquidityAmount,
+                amountAMin: 0,
+                amountBMin: 0,
+                to: address(this),
+                deadline: block.timestamp
+            });
         s_pathArray = [address(counterPartyToken), address(token)];
         uint256[] memory amounts = i_uniswapRouter.swapExactTokensForTokens({
             amountIn: counterPartyTokenAmount,

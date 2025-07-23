@@ -8,6 +8,7 @@ pragma solidity 0.8.20;
 // e responsible for creating and managing trading pairs (liquidity pools) between two tokens.
 
 interface IUniswapV2Factory {
+    
     event PairCreated(
         address indexed token0,
         address indexed token1,

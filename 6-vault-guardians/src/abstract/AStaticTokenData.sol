@@ -7,10 +7,15 @@ import {AStaticUSDCData} from "./AStaticUSDCData.sol";
 abstract contract AStaticTokenData is AStaticUSDCData {
     // Intended to be LINK
     IERC20 internal immutable i_tokenTwo;
+
     string public constant TOKEN_TWO_VAULT_NAME = "Vault Guardian LINK";
     string public constant TOKEN_TWO_VAULT_SYMBOL = "vgLINK";
 
-    constructor(address weth, address tokenOne, address tokenTwo) AStaticUSDCData(weth, tokenOne) {
+    constructor(
+        address weth,
+        address tokenOne,
+        address tokenTwo
+    ) AStaticUSDCData(weth, tokenOne) {
         i_tokenTwo = IERC20(tokenTwo);
     }
 

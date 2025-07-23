@@ -4,6 +4,7 @@ pragma solidity 0.8.20;
 // A subset of the UniswapV2Router01 interface
 // https://github.com/Uniswap/v2-periphery/blob/master/contracts/interfaces/IUniswapV2Router01.sol
 
+// Repsonsible for interacting with Pools
 interface IUniswapV2Router01 {
     // We've made these view instead of pure to make testing easier
 
@@ -49,9 +50,6 @@ interface IUniswapV2Router01 {
     //     bytes32 r,
     //     bytes32 s
     // ) external returns (uint256 amountA, uint256 amountB);
-
-
-
 
     function swapTokensForExactTokens(
         uint256 amountOut,

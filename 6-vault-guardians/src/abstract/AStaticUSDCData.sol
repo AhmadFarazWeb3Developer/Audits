@@ -7,6 +7,10 @@ import {AStaticWethData} from "./AStaticWethData.sol";
 abstract contract AStaticUSDCData is AStaticWethData {
     // Intended to be USDC
     IERC20 internal immutable i_tokenOne;
+
+
+// q why this is public its abstract contract , it not deployable
+
     string public constant TOKEN_ONE_VAULT_NAME = "Vault Guardian USDC";
     string public constant TOKEN_ONE_VAULT_SYMBOL = "vgUSDC";
 

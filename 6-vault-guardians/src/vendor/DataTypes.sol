@@ -2,7 +2,12 @@
 pragma solidity 0.8.20;
 
 // https://github.com/aave/aave-v3-core/blob/master/contracts/protocol/libraries/types/DataTypes.sol
+
+// e It provides well-structured data containers (structs) that store the protocol’s state and are passed between contracts.
 library DataTypes {
+
+
+    
     struct ReserveData {
         //stores the reserve configuration
         ReserveConfigurationMap configuration;
