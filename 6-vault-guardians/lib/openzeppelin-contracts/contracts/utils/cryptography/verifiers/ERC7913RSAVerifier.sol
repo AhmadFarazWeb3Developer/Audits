@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v5.4.0) (utils/cryptography/verifiers/ERC7913RSAVerifier.sol)
 
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
 import {RSA} from "../../../utils/cryptography/RSA.sol";
 import {IERC7913SignatureVerifier} from "../../../interfaces/IERC7913.sol";

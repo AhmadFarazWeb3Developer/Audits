@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
 import {ERC20, ERC20Bridgeable} from "../../token/ERC20/extensions/draft-ERC20Bridgeable.sol";
 

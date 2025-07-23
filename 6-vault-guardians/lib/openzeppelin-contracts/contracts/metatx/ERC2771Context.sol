@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // OpenZeppelin Contracts (last updated v5.4.0) (metatx/ERC2771Context.sol)
 
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.24;
 
 import {Context} from "../utils/Context.sol";
 

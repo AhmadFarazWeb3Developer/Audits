@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity ^0.8.24;
 
 import {ERC4626, ERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
 import {IVaultShares, IERC4626} from "../interfaces/IVaultShares.sol";
@@ -7,6 +7,8 @@ import {AaveAdapter, IPool} from "./investableUniverseAdapters/AaveAdapter.sol";
 import {UniswapAdapter} from "./investableUniverseAdapters/UniswapAdapter.sol";
 import {DataTypes} from "../vendor/DataTypes.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+
+// Responsible for inside value managment like , allow user to deposit assets ,
 
 contract VaultShares is
     ERC4626,
@@ -31,7 +33,6 @@ contract VaultShares is
     address private immutable i_vaultGuardians; // q ?
     uint256 private immutable i_guardianAndDaoCut; // q ?
     bool private s_isActive;
-
 
     AllocationData private s_allocationData;
 
@@ -98,17 +99,15 @@ contract VaultShares is
     /*//////////////////////////////////////////////////////////////
                                FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+
     // We use a struct to avoid stack too deep errors. Thanks Solidity
+
     constructor(
         ConstructorData memory constructorData
     )
-        
         ERC4626(constructorData.asset)
-        
         ERC20(constructorData.vaultName, constructorData.vaultSymbol)
-        
         AaveAdapter(constructorData.aavePool)
-
         UniswapAdapter(
             constructorData.uniswapRouter,
             constructorData.weth,
@@ -119,6 +118,7 @@ contract VaultShares is
         i_guardianAndDaoCut = constructorData.guardianAndDaoCut;
         i_vaultGuardians = constructorData.vaultGuardians;
         s_isActive = true;
+
         updateHoldingAllocation(constructorData.allocationData);
 
         // External calls
@@ -220,6 +220,9 @@ contract VaultShares is
      * @notice Anyone can call this and pay the gas costs to rebalance the portfolio at any time.
      * @dev We understand that this is horrible for gas costs.
      */
+
+    //  @audit-info unused ?
+
     function rebalanceFunds() public isActive divestThenInvest nonReentrant {}
 
     /**

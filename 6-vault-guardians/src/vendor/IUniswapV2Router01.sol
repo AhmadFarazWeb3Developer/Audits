@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity ^0.8.24;
 
 // A subset of the UniswapV2Router01 interface
 // https://github.com/Uniswap/v2-periphery/blob/master/contracts/interfaces/IUniswapV2Router01.sol
 
-// Repsonsible for interacting with Pools
+// Repsonsible for interacting with Pools 
 interface IUniswapV2Router01 {
     // We've made these view instead of pure to make testing easier
 

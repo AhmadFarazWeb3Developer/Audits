@@ -1,12 +1,17 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity ^0.8.24;
 
 import {Base_Test} from "../../Base.t.sol";
+
 import {VaultShares} from "../../../src/protocol/VaultShares.sol";
+
 import {ERC20Mock} from "../../mocks/ERC20Mock.sol";
+
 import {VaultGuardians, IERC20} from "../../../src/protocol/VaultGuardians.sol";
 
 contract VaultGuardiansTest is Base_Test {
+
+
     address user = makeAddr("user");
 
     uint256 mintAmount = 100 ether;

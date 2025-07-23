@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity ^0.8.24;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IUniswapV2Factory} from "../../src/vendor/IUniswapV2Factory.sol";
@@ -25,7 +25,10 @@ contract UniswapFactoryMock is IUniswapV2Factory {
         return zero;
     }
 
-    function getPair(address, /*tokenA*/ address /*tokenB*/ ) external view returns (address pair) {
+    function getPair(
+        address,
+        /*tokenA*/ address /*tokenB*/
+    ) external view returns (address pair) {
         return pairToReturn;
     }
 
@@ -35,7 +38,10 @@ contract UniswapFactoryMock is IUniswapV2Factory {
         return zero_value;
     }
 
-    function createPair(address, /* tokenA */ address /* tokenB */ ) external returns (address pair) {
+    function createPair(
+        address,
+        /* tokenA */ address /* tokenB */
+    ) external returns (address pair) {
         doSomething = doSomething + 1;
         return zero;
     }
