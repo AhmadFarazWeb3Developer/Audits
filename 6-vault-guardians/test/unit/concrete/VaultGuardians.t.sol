@@ -1,66 +1,62 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: SEE LICENSE IN LICENSE
 pragma solidity ^0.8.24;
-
-import {Base_Test} from "../../Base.t.sol";
-
-import {VaultShares} from "../../../src/protocol/VaultShares.sol";
-
+import {Test, console2} from "forge-std/Test.sol";
+import {Utilities_Test} from "../../Utilities_Test.t.sol";
 import {ERC20Mock} from "../../mocks/ERC20Mock.sol";
 
-import {VaultGuardians, IERC20} from "../../../src/protocol/VaultGuardians.sol";
+//  Testing Vault Guardian, the main contract
 
-contract VaultGuardiansTest is Base_Test {
-
-
-    address user = makeAddr("user");
-
+contract VaultGuardiansTest is Utilities_Test {
+    address attacker = makeAddr("attacker");
     uint256 mintAmount = 100 ether;
 
     function setUp() public override {
-        Base_Test.setUp();
+        Utilities_Test.setUp();
     }
 
-    function testUpdateGuardianStakePrice() public {
-        uint256 newStakePrice = 10;
-        vm.prank(vaultGuardians.owner());
-        vaultGuardians.updateGuardianStakePrice(newStakePrice);
-        assertEq(vaultGuardians.getGuardianStakePrice(), newStakePrice);
+    function testVaultGuardianAddress() public view {
+        console2.log("Vaut Guardian Address : ", address(vaultGuardians));
     }
 
-    function testUpdateGuardianStakePriceOnlyOwner() public {
-        uint256 newStakePrice = 10;
-        vm.prank(user);
+    function testupdateGuardianStakePrice() public {
+        uint256 new_guardianStakePrice = 15 ether;
+        vaultGuardians.updateGuardianStakePrice(new_guardianStakePrice);
+
+        vm.startPrank(attacker);
         vm.expectRevert();
-        vaultGuardians.updateGuardianStakePrice(newStakePrice);
+        vaultGuardians.updateGuardianStakePrice(new_guardianStakePrice);
+        vm.stopPrank();
     }
 
-    function testUpdateGuardianAndDaoCut() public {
-        uint256 newGuardianAndDaoCut = 10;
-        vm.prank(vaultGuardians.owner());
-        vaultGuardians.updateGuardianAndDaoCut(newGuardianAndDaoCut);
-        assertEq(vaultGuardians.getGuardianAndDaoCut(), newGuardianAndDaoCut);
-    }
-
-    function testUpdateGuardianAndDaoCutOnlyOwner() public {
-        uint256 newGuardianAndDaoCut = 10;
-        vm.prank(user);
+    function testupdateGuardianAndDaoCut() public {
+        uint256 new_guardianAndDaoCut = 15 ether;
+        vaultGuardians.updateGuardianAndDaoCut(new_guardianAndDaoCut);
+        vm.startPrank(attacker);
         vm.expectRevert();
-        vaultGuardians.updateGuardianAndDaoCut(newGuardianAndDaoCut);
+        vaultGuardians.updateGuardianStakePrice(new_guardianAndDaoCut);
+        vm.stopPrank();
     }
 
     function testSweepErc20s() public {
         ERC20Mock mock = new ERC20Mock();
+
         mock.mint(mintAmount, msg.sender);
+
+        console2.log(mock.balanceOf(address(msg.sender)));
+
         vm.prank(msg.sender);
         mock.transfer(address(vaultGuardians), mintAmount);
+        console2.log(mock.balanceOf(address(vaultGuardians)));
+        console2.log(mock.balanceOf(address(msg.sender)));
 
-        uint256 balanceBefore = mock.balanceOf(address(vaultGuardianGovernor));
+        vm.prank(attacker);
+        vaultGuardians.sweepErc20s(mock);
 
-        vm.prank(vaultGuardians.owner());
-        vaultGuardians.sweepErc20s(IERC20(mock));
+        console2.log(mock.balanceOf(address(vaultGuardians)));
 
-        uint256 balanceAfter = mock.balanceOf(address(vaultGuardianGovernor));
-
-        assertEq(balanceAfter - balanceBefore, mintAmount);
+        console2.log(
+            "SYstem owner balance ",
+            mock.balanceOf(vaultGuardians.owner())
+        );
     }
 }

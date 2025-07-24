@@ -48,10 +48,12 @@ contract VaultGuardiansBase is AStaticTokenData, IVaultData {
         uint256 amount,
         uint256 amountNeeded
     );
+
     error VaultGuardiansBase__NotAGuardian(
         address guardianAddress,
         IERC20 token
     );
+
     error VaultGuardiansBase__CantQuitGuardianWithNonWethVaults(
         address guardianAddress
     );
@@ -69,23 +71,30 @@ contract VaultGuardiansBase is AStaticTokenData, IVaultData {
     //////////////////////////////////////////////////////////////*/
 
     address private immutable i_aavePool;
+
     address private immutable i_uniswapV2Router;
+
     VaultGuardianToken private immutable i_vgToken;
 
     uint256 private constant GUARDIAN_FEE = 0.1 ether;
 
     // DAO updatable values
     uint256 internal s_guardianStakePrice = 10 ether;
+
+    // audit-bug  what does this represent? is it naming issue ?
     uint256 internal s_guardianAndDaoCut = 1000;
 
     // The guardian's address mapped to the asset, mapped to the allocation data
     mapping(address guardianAddress => mapping(IERC20 asset => IVaultShares vaultShares))
         private s_guardians;
+
+    // allowed tokens
     mapping(address token => bool approved) private s_isApprovedToken;
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
+
     event GuardianAdded(address guardianAddress, IERC20 token);
     event GaurdianRemoved(address guardianAddress, IERC20 token);
     event InvestedInGuardian(
@@ -93,11 +102,13 @@ contract VaultGuardiansBase is AStaticTokenData, IVaultData {
         IERC20 token,
         uint256 amount
     );
+
     event DinvestedFromGuardian(
         address guardianAddress,
         IERC20 token,
         uint256 amount
     );
+
     event GuardianUpdatedHoldingAllocation(
         address guardianAddress,
         IERC20 token
@@ -106,6 +117,7 @@ contract VaultGuardiansBase is AStaticTokenData, IVaultData {
     /*//////////////////////////////////////////////////////////////
                                MODIFIERS
     //////////////////////////////////////////////////////////////*/
+
     modifier onlyGuardian(IERC20 token) {
         if (address(s_guardians[msg.sender][token]) == address(0)) {
             revert VaultGuardiansBase__NotAGuardian(msg.sender, token);
@@ -146,11 +158,10 @@ contract VaultGuardiansBase is AStaticTokenData, IVaultData {
      * @param wethAllocationData the allocation data for the WETH vault
      */
 
-    // q is there any mistmatch between the passing of arguments ?
     function becomeGuardian(
         AllocationData memory wethAllocationData
     ) external returns (address) {
-        // used to create WETH vault
+        // used to create vault , where is
         VaultShares wethVault = new VaultShares(
             IVaultShares.ConstructorData({
                 asset: i_weth,
@@ -311,15 +322,23 @@ contract VaultGuardiansBase is AStaticTokenData, IVaultData {
         IERC20 token,
         VaultShares tokenVault
     ) private returns (address) {
+        // 1. First validate the token ---- GPT
+        require(address(token) != address(0), "Invalid token");
+        require(address(tokenVault) != address(0), "Vault creation failed");
+
+        // this is the vault of this person
         s_guardians[msg.sender][token] = IVaultShares(address(tokenVault));
 
         emit GuardianAdded(msg.sender, token);
+
+        // what the problems ?
 
         i_vgToken.mint(msg.sender, s_guardianStakePrice);
 
         token.safeTransferFrom(msg.sender, address(this), s_guardianStakePrice);
 
         bool succ = token.approve(address(tokenVault), s_guardianStakePrice);
+
         if (!succ) {
             revert VaultGuardiansBase__TransferFailed();
         }

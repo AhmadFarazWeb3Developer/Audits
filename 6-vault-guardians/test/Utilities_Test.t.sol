@@ -3,24 +3,27 @@ pragma solidity ^0.8.24;
 import {Test, console2} from "forge-std/Test.sol";
 
 // import {} from "forge-std";
-import {VaultGuardians} from "../../../src/protocol/VaultGuardians.sol";
-import {Base_Test} from "../../Base.t.sol";
-import {ERC20Mock} from "../../mocks/ERC20Mock.sol";
+import {VaultGuardians} from "../src/protocol/VaultGuardians.sol";
+import {VaultGuardianToken} from "../src/dao/VaultGuardianToken.sol";
+import {VaultGuardiansBase} from "../src/protocol/VaultGuardiansBase.sol";
 
-import {VaultGuardianToken} from "../../../src/dao/VaultGuardianToken.sol";
+import {IVaultData} from "../src/interfaces/IVaultData.sol";
+import {ERC20Mock} from "./mocks/ERC20Mock.sol";
 
-import {UniswapRouterMock} from "../../mocks/UniswapRouterMock.sol";
-import {AavePoolMock} from "../../mocks/AavePoolMock.sol";
-import {UniswapFactoryMock} from "../../mocks/UniswapFactoryMock.sol";
+import {UniswapRouterMock} from "./mocks/UniswapRouterMock.sol";
+import {AavePoolMock} from "./mocks/AavePoolMock.sol";
+import {UniswapFactoryMock} from "./mocks/UniswapFactoryMock.sol";
 
 //  Testing Vault Guardian, the main contract
-contract VaultGuardiansTest is Test {
+abstract contract Utilities_Test is Test, IVaultData {
     VaultGuardians public vaultGuardians;
     VaultGuardianToken public vaultGuardiansToken;
 
-    address public WEHT_TOKEN;
-    address public USDC_TOKEN;
-    address public LINK_TOKEN;
+    ERC20Mock public WEHT_TOKEN;
+    ERC20Mock public USDC_TOKEN;
+    ERC20Mock LINK_TOKEN;
+
+    ERC20Mock public aWeth;
 
     AavePoolMock public aavePool;
     UniswapRouterMock public uniswapRouter;
@@ -28,12 +31,17 @@ contract VaultGuardiansTest is Test {
 
     address public vaultGuardianToken;
 
-    function setUp() public {
-        ERC20Mock WEHT_TOKEN = new ERC20Mock();
-        ERC20Mock USDC_TOKEN = new ERC20Mock();
-        ERC20Mock LINK_TOKEN = new ERC20Mock();
+    function setUp() public virtual {
+        WEHT_TOKEN = new ERC20Mock();
+        USDC_TOKEN = new ERC20Mock();
+        LINK_TOKEN = new ERC20Mock();
+
+        // the token which aave protocol return as a ownership
+
+        aWeth = new ERC20Mock();
 
         aavePool = new AavePoolMock();
+        aavePool.updateAtokenAddress(address(WEHT_TOKEN), address(aWeth));
 
         uniswapFactoryMock = new UniswapFactoryMock();
 
@@ -50,9 +58,5 @@ contract VaultGuardiansTest is Test {
             address(LINK_TOKEN),
             address(vaultGuardianToken)
         );
-    }
-
-    function testVaultGuardianAddress() public {
-        console2.log("Vaut Guardian Address : ", address(vaultGuardians));
     }
 }

@@ -22,7 +22,7 @@ abstract contract Base_Test is Test, IVaultData {
     VaultGuardianToken public vaultGuardianToken;
 
     NetworkConfig public networkConfig;
-    
+
     address public aavePool;
     address public uniswapRouter;
     address public wethAddress;
@@ -44,7 +44,7 @@ abstract contract Base_Test is Test, IVaultData {
     /*//////////////////////////////////////////////////////////////////////////
                                   SET-UP FUNCTION
     //////////////////////////////////////////////////////////////////////////*/
-    
+
     function setUp() public virtual {
         deployer = new DeployVaultGuardians();
 
@@ -75,7 +75,9 @@ abstract contract Base_Test is Test, IVaultData {
 
     function _setupMocks() internal {
         if (block.chainid != 1) {
+
             uniswapFactoryMock.updatePairToReturn(uniswapRouter);
+            
             awethTokenMock = new ERC20Mock();
             ausdcTokenMock = new ERC20Mock();
             alinkTokenMock = new ERC20Mock();

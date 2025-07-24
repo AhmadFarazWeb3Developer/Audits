@@ -127,6 +127,7 @@ contract VaultShares is
                 .getReserveData(address(constructorData.asset))
                 .aTokenAddress
         );
+
         i_uniswapLiquidityToken = IERC20(
             i_uniswapFactory.getPair(
                 address(constructorData.asset),

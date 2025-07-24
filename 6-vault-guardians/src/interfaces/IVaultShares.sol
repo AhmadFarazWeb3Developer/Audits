@@ -6,6 +6,7 @@ import {IVaultData} from "./IVaultData.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IVaultShares is IERC4626, IVaultData {
+    
     struct ConstructorData {
         IERC20 asset;
         string vaultName;

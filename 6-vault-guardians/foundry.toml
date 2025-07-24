@@ -1,9 +1,9 @@
 [profile.default]
+foundry = "0.8.24"
+
 src = "src"
 out = "out"
 libs = ["lib"]
-
-
 remappings = ['@openzeppelin/contracts=lib/openzeppelin-contracts/contracts']
 
 [rpc_endpoints]

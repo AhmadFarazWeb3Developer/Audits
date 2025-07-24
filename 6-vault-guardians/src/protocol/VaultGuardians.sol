@@ -52,6 +52,7 @@ contract VaultGuardians is Ownable, VaultGuardiansBase {
         uint256 oldStakePrice,
         uint256 newStakePrice
     );
+
     event VaultGuardians__UpdatedFee(uint256 oldFee, uint256 newFee);
     event VaultGuardians__SweptTokens(address asset);
 
@@ -83,9 +84,13 @@ contract VaultGuardians is Ownable, VaultGuardiansBase {
      */
 
     // e increase/decrease the stack price to be part of vault guardian currentlty 5 ETH
+
+    //  event VaultGuardians__UpdatedStakePrice( uint256 oldStakePrice, uint256 newStakePrice );
+
     function updateGuardianStakePrice(
         uint256 newStakePrice
     ) external onlyOwner {
+        // audit-bug wrong emit  , emitting at wrong place ?
         s_guardianStakePrice = newStakePrice;
         emit VaultGuardians__UpdatedStakePrice(
             s_guardianStakePrice,
@@ -101,8 +106,11 @@ contract VaultGuardians is Ownable, VaultGuardiansBase {
      */
 
     // e updates the DA0 + Vault onwer fee percentage like when user earn 200 ETH Reward , so like 10% will go to DAO + vault onwer
+
+    // @audit-bug , event emitting at wrong place ?
     function updateGuardianAndDaoCut(uint256 newCut) external onlyOwner {
         s_guardianAndDaoCut = newCut;
+
         emit VaultGuardians__UpdatedStakePrice(s_guardianAndDaoCut, newCut);
     }
 
@@ -118,6 +126,8 @@ contract VaultGuardians is Ownable, VaultGuardiansBase {
 
     // q if someone hacker calles it to send to owner ?
     // is approval granted
+
+    // e safeTransfer auto return bool value
     function sweepErc20s(IERC20 asset) external {
         uint256 amount = asset.balanceOf(address(this));
         emit VaultGuardians__SweptTokens(address(asset));

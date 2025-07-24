@@ -7,6 +7,8 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract AavePoolMock is IPool {
     mapping(address => address) public s_assetToAtoken;
 
+    // mint ownnership token when someone depoist token to this protocol
+
     function updateAtokenAddress(address asset, address aToken) public {
         s_assetToAtoken[asset] = aToken;
     }
