@@ -128,6 +128,7 @@ contract VaultGuardians is Ownable, VaultGuardiansBase {
     // is approval granted
 
     // e safeTransfer auto return bool value
+    // @audit-high malicious user can sweep ERC20s
     function sweepErc20s(IERC20 asset) external {
         uint256 amount = asset.balanceOf(address(this));
         emit VaultGuardians__SweptTokens(address(asset));
