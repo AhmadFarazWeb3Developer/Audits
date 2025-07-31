@@ -32,6 +32,8 @@ contract NaiveReceiverPoolTest is UtilsTest {
         naivePool.flashLoan(flashLoanReceiver, address(weth), 10, "");
         vm.stopPrank();
     }
+
+    
     function testDrainUserFunds() public {
         // 1. Using dmmay key
         uint256 privateKey = 0xA11CE;
