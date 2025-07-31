@@ -1,0 +1,44 @@
+-------------------------------------------------
+---------- Swap "10 USDC" for "1 WETH" ----------
+-------------------------------------------------
+
+
+We have two pools
+
+1. Pool one = 100 WETH 
+2. Pool two = 1000 USDC
+
+Ratio price between the pools are = 1 WETH = 10 USDC
+
+
+-------------------------------------------------
+------ USER(A) Swap "10 USDC" for "1 WETH" ------
+-------------------------------------------------
+
+User(A) comes and put 10 USDC in pool ONE
+
+Pool one = 99
+Pool two = 1010
+
+
+New Ration is now 1010/99 = 10.2 
+-> means 1 WETH = 10.2 USDC , becuase WETH demand increased the WETH price
+
+
+
+-------------------------------------------------
+----- USER(B) Swap "1 WETH " for "10 USDC" ------
+-------------------------------------------------
+
+
+Buy 10.2 USDC for 1 WETH means little cheaper
+
+
+
+Pool one = 100
+Pool two = 1010-10.02 = 999.8
+
+New Ration is now 999/8/100 = 9.998 
+
+-> means 1 WETH = 9.998 USDC , becuase USDC demand decreased the WETH price
+

@@ -1,0 +1,48 @@
+[submodule "Invariant-break/lib/forge-std"]
+    path = Invariant-break/lib/forge-std
+    url = https://github.com/foundry-rs/forge-std
+[submodule "Invariant-break/lib/openzeppelin-contracts"]
+    path = Invariant-break/lib/openzeppelin-contracts
+    url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "3-t-swap/lib/forge-std"]
+	path = 3-t-swap/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "4-thunder-loan/foundry-rs/forge-std/lib/forge-std"]
+	path = 4-thunder-loan/foundry-rs/forge-std/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "4-thunder-loan/lib/forge-std"]
+	path = 4-thunder-loan/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "4-thunder-loan/lib/openzeppelin-contracts"]
+	path = 4-thunder-loan/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "5-boss-bridge/lib/forge-std"]
+	path = 5-boss-bridge/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "5-boss-bridge/lib/openzeppelin-contracts"]
+	path = 5-boss-bridge/lib/openzeppelin-contracts
+	url = https://github.com/lib/OpenZeppelin/openzeppelin-contracts
+[submodule "7-unstoppable/lib/forge-std"]
+	path = 7-unstoppable/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "7-unstoppable/lib/openzeppelin-contracts"]
+	path = 7-unstoppable/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "7-unstoppable/lib/solmate"]
+	path = 7-unstoppable/lib/solmate
+	url = https://github.com/transmissions11/solmate
+[submodule "7-unstoppable/lib/solady"]
+	path = 7-unstoppable/lib/solady
+	url = https://github.com/vectorized/solady
+[submodule "8-naive-receiver/lib/forge-std"]
+	path = 8-naive-receiver/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "8-naive-receiver/lib/solmate"]
+	path = 8-naive-receiver/lib/solmate
+	url = https://github.com/transmissions11/solmate
+[submodule "8-naive-receiver/lib/openzeppelin-contracts"]
+	path = 8-naive-receiver/lib/openzeppelin-contracts
+	url = https://github.com/Openzeppelin/openzeppelin-contracts
+[submodule "8-naive-receiver/lib/solady"]
+	path = 8-naive-receiver/lib/solady
+	url = https://github.com/vectorized/solady

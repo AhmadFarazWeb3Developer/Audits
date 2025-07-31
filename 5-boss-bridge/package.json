@@ -1,0 +1,23 @@
+{
+  "name": "7-boss-bridge-audit",
+  "version": "1.0.0",
+  "description": "<p align=\"center\"> <img src=\"./images/boss-bridge.png\" width=\"400\" alt=\"puppy-raffle\"> <br/>",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cyfrin/7-boss-bridge-audit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cyfrin/7-boss-bridge-audit/issues"
+  },
+  "homepage": "https://github.com/Cyfrin/7-boss-bridge-audit#readme"
+}
