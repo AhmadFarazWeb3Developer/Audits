@@ -2,7 +2,7 @@
 
 ### [C-1] Arbitrary External Call Injection `TrusterLenderPool::flashLoan`
 
-**Description**: The `TrusterLenderPool` protocol provides flash loans to any one. The malicious user comes and takes the advantage of `target.functionCall(data)` and pass the data which under the hood calls the approve selector of the target token and flew away all the `DVT` tokens.
+**Description**: The `TrusterLenderPool` protocol provides flash loans to anyone. A malicious user can exploit the `target.functionCall(data)` by passing crafted calldata that invokes the `approve` function of the DVT token. This allows the attacker to approve themselves to spend all tokens held by the pool and subsequently drain the entire balance.
 
 ```javascript
 function flashLoan(uint256 amount, address borrower, address target, bytes calldata data) external nonReentrant returns (bool) {
@@ -48,8 +48,11 @@ contract Target {
     function attack() external {
      uint256 poolBalance = token.balanceOf(address(pool)); // 1 million DVTs
       
-      pool.flashLoan( 0, address(this),address(token),
-@>           abi.encodeWithSelector( token.approve.selector, address(this),  poolBalance)
+      pool.flashLoan(
+            0,
+            address(this),
+            address(token),
+@>         abi.encodeWithSelector(token.approve.selector, address(this), poolBalance)
         );
 
         // Drain the funds
@@ -61,11 +64,11 @@ contract Target {
 
 **Proof of Concept**:
 
-1. Attacker pass call data.
-2. Which is `approve` selector for his self with all pool token.
-3. Call flashLoan with `0` flash loan.
-4. Transfer all the funds from pool
-5. And Pool loss all funds
+1. Attacker passes malicious calldata.
+2. The calldata contains the `approve` selector, granting the attacker permission to spend all of the pool's tokens.
+3. Calls `flashLoan` with `amount = 0` to bypass repayment logic.
+4. Executes `transferFrom` to drain all tokens from the pool.
+5. Pool loses all funds.
 
 **Proof of Code**:
 
@@ -81,8 +84,4 @@ function testStealAllPoolFunds() public {
     }
 ```
 
-**Recommended Mitigation**: Consider limiting the target calling contracts function selectors , that a specific call data can be passed only.
-
-```diff
-
-```
+**Recommended Mitigation**: Restrict which contract addresses and function selectors can be called via the `target.functionCall(data)` pattern. Avoid allowing arbitrary low-level calls from user input. Consider removing this flexibility entirely if not strictly necessary.
