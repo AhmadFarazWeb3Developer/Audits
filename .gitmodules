@@ -55,3 +55,9 @@
 [submodule "9-truster/lib/openzeppelin-contracts"]
 	path = 9-truster/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "10-side-entrance/lib/forge-std"]
+	path = 10-side-entrance/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "10-side-entrance/lib/solady"]
+	path = 10-side-entrance/lib/solady
+	url = https://github.com/vectorized/solady
