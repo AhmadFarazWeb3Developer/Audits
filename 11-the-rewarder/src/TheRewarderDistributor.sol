@@ -26,7 +26,6 @@ struct Claim {
  * An efficient token distributor contract based on Merkle proofs and bitmaps
  */
 contract TheRewarderDistributor {
-    
     using BitMaps for BitMaps.BitMap;
 
     address public immutable owner = msg.sender;
@@ -39,7 +38,12 @@ contract TheRewarderDistributor {
     error InvalidProof();
     error NotEnoughTokensToDistribute();
 
-    event NewDistribution(IERC20 token, uint256 batchNumber, bytes32 newMerkleRoot, uint256 totalAmount);
+    event NewDistribution(
+        IERC20 token,
+        uint256 batchNumber,
+        bytes32 newMerkleRoot,
+        uint256 totalAmount
+    );
 
     function getRemaining(address token) external view returns (uint256) {
         return distributions[IERC20(token)].remaining;
@@ -49,27 +53,45 @@ contract TheRewarderDistributor {
         return distributions[IERC20(token)].nextBatchNumber;
     }
 
-    function getRoot(address token, uint256 batchNumber) external view returns (bytes32) {
+    function getRoot(
+        address token,
+        uint256 batchNumber
+    ) external view returns (bytes32) {
         return distributions[IERC20(token)].roots[batchNumber];
     }
 
-    function createDistribution(IERC20 token, bytes32 newRoot, uint256 amount) external {
+    // e lets create first batch of tokens
+    // q who create the Distributions ?
+
+    function createDistribution(
+        IERC20 token,
+        bytes32 newRoot,
+        uint256 amount
+    ) external {
         if (amount == 0) revert NotEnoughTokensToDistribute();
         if (newRoot == bytes32(0)) revert InvalidRoot();
         if (distributions[token].remaining != 0) revert StillDistributing();
 
-        distributions[token].remaining = amount;
+        distributions[token].remaining = amount; // any amount
 
-        uint256 batchNumber = distributions[token].nextBatchNumber;
-        distributions[token].roots[batchNumber] = newRoot;
-        distributions[token].nextBatchNumber++;
+        uint256 batchNumber = distributions[token].nextBatchNumber; // intially 0
+        distributions[token].roots[batchNumber] = newRoot; // set root
+        distributions[token].nextBatchNumber++; // now 1 updates
 
-        SafeTransferLib.safeTransferFrom(address(token), msg.sender, address(this), amount);
+        SafeTransferLib.safeTransferFrom(
+            address(token),
+            msg.sender,
+            address(this),
+            amount
+        );
 
         emit NewDistribution(token, batchNumber, newRoot, amount);
     }
 
+    // q who can clean ?
     function clean(IERC20[] calldata tokens) external {
+        //  @audit-gas  expensive operation on storage
+
         for (uint256 i = 0; i < tokens.length; i++) {
             IERC20 token = tokens[i];
             if (distributions[token].remaining == 0) {
@@ -79,7 +101,10 @@ contract TheRewarderDistributor {
     }
 
     // Allow claiming rewards of multiple tokens in a single transaction
-    function claimRewards(Claim[] memory inputClaims, IERC20[] memory inputTokens) external {
+    function claimRewards(
+        Claim[] memory inputClaims,
+        IERC20[] memory inputTokens
+    ) external {
         Claim memory inputClaim;
         IERC20 token;
         uint256 bitsSet; // accumulator
@@ -88,42 +113,61 @@ contract TheRewarderDistributor {
         for (uint256 i = 0; i < inputClaims.length; i++) {
             inputClaim = inputClaims[i];
 
-            uint256 wordPosition = inputClaim.batchNumber / 256;
-            uint256 bitPosition = inputClaim.batchNumber % 256;
+            uint256 wordPosition = inputClaim.batchNumber / 256; // 0
+            uint256 bitPosition = inputClaim.batchNumber % 256; // 0
 
             if (token != inputTokens[inputClaim.tokenIndex]) {
                 if (address(token) != address(0)) {
-                    if (!_setClaimed(token, amount, wordPosition, bitsSet)) revert AlreadyClaimed();
+                    if (!_setClaimed(token, amount, wordPosition, bitsSet))
+                        revert AlreadyClaimed();
                 }
 
                 token = inputTokens[inputClaim.tokenIndex];
                 bitsSet = 1 << bitPosition; // set bit at given position
                 amount = inputClaim.amount;
             } else {
-                bitsSet = bitsSet | 1 << bitPosition;
+                bitsSet = bitsSet | (1 << bitPosition);
                 amount += inputClaim.amount;
             }
 
             // for the last claim
             if (i == inputClaims.length - 1) {
-                if (!_setClaimed(token, amount, wordPosition, bitsSet)) revert AlreadyClaimed();
+                if (!_setClaimed(token, amount, wordPosition, bitsSet))
+                    revert AlreadyClaimed();
             }
 
-            bytes32 leaf = keccak256(abi.encodePacked(msg.sender, inputClaim.amount));
+            bytes32 leaf = keccak256(
+                abi.encodePacked(msg.sender, inputClaim.amount)
+            );
+
             bytes32 root = distributions[token].roots[inputClaim.batchNumber];
 
-            if (!MerkleProof.verify(inputClaim.proof, root, leaf)) revert InvalidProof();
+            if (!MerkleProof.verify(inputClaim.proof, root, leaf))
+                revert InvalidProof();
 
-            inputTokens[inputClaim.tokenIndex].transfer(msg.sender, inputClaim.amount);
+            // e token transfer but where updating claims ?
+            inputTokens[inputClaim.tokenIndex].transfer(
+                msg.sender,
+                inputClaim.amount
+            );
         }
     }
 
-    function _setClaimed(IERC20 token, uint256 amount, uint256 wordPosition, uint256 newBits) private returns (bool) {
-        uint256 currentWord = distributions[token].claims[msg.sender][wordPosition];
+    function _setClaimed(
+        IERC20 token,
+        uint256 amount,
+        uint256 wordPosition,
+        uint256 newBits
+    ) private returns (bool) {
+        uint256 currentWord = distributions[token].claims[msg.sender][
+            wordPosition
+        ];
         if ((currentWord & newBits) != 0) return false;
 
         // update state
-        distributions[token].claims[msg.sender][wordPosition] = currentWord | newBits;
+        distributions[token].claims[msg.sender][wordPosition] =
+            currentWord |
+            newBits;
         distributions[token].remaining -= amount;
 
         return true;
