@@ -123,6 +123,7 @@ contract TheRewarderDistributor {
                 }
 
                 token = inputTokens[inputClaim.tokenIndex];
+
                 bitsSet = 1 << bitPosition; // set bit at given position
                 amount = inputClaim.amount;
             } else {

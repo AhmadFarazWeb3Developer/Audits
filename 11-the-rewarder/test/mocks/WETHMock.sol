@@ -6,4 +6,7 @@ contract WETHMock is ERC20 {
     constructor() ERC20("WETH Mock", "WETH") {
         _mint(address(this), 1000 ether);
     }
+    function mint(address _to, uint256 _amount) public {
+        _mint(_to, _amount);
+    }
 }

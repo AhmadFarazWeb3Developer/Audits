@@ -22,7 +22,9 @@ contract TheRewarderDistributorTest is UtilsTest {
         rewarderDistributor.getRoot(address(usdcMock), 0);
     }
     function testClaimReward() public {
-        Claim[] memory claim = Claim[](1);
+        IERC20[] memory tokens = new IERC20[](2);
+        Claim[] memory claim = new Claim[](3);
+
         claim[0] = Claim({
             batchNumber: 0,
             amount: 100,
@@ -30,8 +32,24 @@ contract TheRewarderDistributorTest is UtilsTest {
             proof: firstUserProof
         });
 
-        IERC20[] memory tokens = IERC20[](1);
-        tokens[0] = (address(usdcMock));
+        claim[1] = Claim({
+            batchNumber: 0,
+            amount: 100,
+            tokenIndex: 0,
+            proof: firstUserProof
+        });
+        claim[3] = Claim({
+            batchNumber: 0,
+            amount: 100,
+            tokenIndex: 0,
+            proof: firstUserProof
+        });
+
+        tokens[0] = usdcMock;
+        // tokens[1] = wethMock;
+
+        vm.startPrank(0x0000000000000000000000000000000000000001);
         rewarderDistributor.claimRewards(claim, tokens);
+        vm.stopPrank();
     }
 }

@@ -20,13 +20,14 @@ const tree = new MerkleTree(leaves, keccak256, { sortPairs: true });
 
 console.log("Merkle Root:", tree.getHexRoot());
 
-const leaf = Buffer.from(
+const leaf1 = Buffer.from(
   keccak256(solidityPacked(["address", "uint256"], users[0])).slice(2),
   "hex"
 );
-console.log("Proof for first user:", tree.getHexProof(leaf));
+console.log("Proof for first user:", tree.getHexProof(leaf1));
 
-//  Creating Claim
-
-
-
+const leaf2 = Buffer.from(
+  keccak256(solidityPacked(["address", "uint256"], users[1])).slice(2),
+  "hex"
+);
+console.log("Proof for second user:", tree.getHexProof(leaf2));
