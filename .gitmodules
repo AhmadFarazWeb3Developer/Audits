@@ -76,3 +76,12 @@
 [submodule "12-selfie/lib/openzeppelin-contracts"]
 	path = 12-selfie/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "13-compromised/lib/forge-std"]
+	path = 13-compromised/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "13-compromised/lib/openzeppelin-contracts"]
+	path = 13-compromised/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "13-compromised/lib/solady"]
+	path = 13-compromised/lib/solady
+	url = https://github.com/vectorized/solady
