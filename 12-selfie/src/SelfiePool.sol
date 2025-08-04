@@ -58,6 +58,7 @@ contract SelfiePool is IERC3156FlashLender, ReentrancyGuard {
             revert UnsupportedCurrency();
         }
 
+        // CEI ?
         token.transfer(address(_receiver), _amount);
         if (
             _receiver.onFlashLoan(msg.sender, _token, _amount, 0, _data) !=

@@ -12,7 +12,9 @@ contract SimpleGovernance is ISimpleGovernance {
     uint256 private constant ACTION_DELAY_IN_SECONDS = 2 days;
 
     DamnValuableVotes private _votingToken;
+
     uint256 private _actionCounter;
+
     mapping(uint256 => GovernanceAction) private _actions;
 
     constructor(DamnValuableVotes votingToken) {
@@ -22,7 +24,7 @@ contract SimpleGovernance is ISimpleGovernance {
 
     function queueAction(
         address target,
-        uint128 value,
+        uint128 value, // q why uint128
         bytes calldata data
     ) external returns (uint256 actionId) {
         if (!_hasEnoughVotes(msg.sender)) {
@@ -54,6 +56,7 @@ contract SimpleGovernance is ISimpleGovernance {
         emit ActionQueued(actionId, msg.sender);
     }
 
+    // q who can execute Action ?
     function executeAction(
         uint256 actionId
     ) external payable returns (bytes memory) {

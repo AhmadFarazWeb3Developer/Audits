@@ -25,13 +25,19 @@ interface ISimpleGovernance {
         uint128 value,
         bytes calldata data
     ) external returns (uint256 actionId);
+   
+   
     function executeAction(
         uint256 actionId
     ) external payable returns (bytes memory returndata);
+
+
+
     function getActionDelay() external view returns (uint256 delay);
     function getVotingToken() external view returns (address token);
     function getAction(
         uint256 actionId
     ) external view returns (GovernanceAction memory action);
+    
     function getActionCounter() external view returns (uint256);
 }
