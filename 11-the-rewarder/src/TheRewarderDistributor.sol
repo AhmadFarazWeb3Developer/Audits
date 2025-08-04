@@ -91,7 +91,6 @@ contract TheRewarderDistributor {
     // q who can clean ?
     function clean(IERC20[] calldata tokens) external {
         //  @audit-gas  expensive operation on storage
-
         for (uint256 i = 0; i < tokens.length; i++) {
             IERC20 token = tokens[i];
             if (distributions[token].remaining == 0) {
@@ -113,8 +112,8 @@ contract TheRewarderDistributor {
         for (uint256 i = 0; i < inputClaims.length; i++) {
             inputClaim = inputClaims[i];
 
-            uint256 wordPosition = inputClaim.batchNumber / 256; // 0
-            uint256 bitPosition = inputClaim.batchNumber % 256; // 0
+            uint256 wordPosition = inputClaim.batchNumber / 256; // gives bucket number
+            uint256 bitPosition = inputClaim.batchNumber % 256; //  give index inside that bucket
 
             if (token != inputTokens[inputClaim.tokenIndex]) {
                 if (address(token) != address(0)) {
