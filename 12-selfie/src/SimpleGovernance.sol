@@ -99,6 +99,7 @@ contract SimpleGovernance is ISimpleGovernance {
      * 1) it's never been executed before and
      * 2) enough time has passed since it was first proposed
      */
+
     function _canBeExecuted(uint256 actionId) private view returns (bool) {
         GovernanceAction memory actionToExecute = _actions[actionId];
 

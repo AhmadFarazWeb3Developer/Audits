@@ -15,7 +15,7 @@ abstract contract UtilsTest is Test {
     function setUp() public virtual {
         dvtVotes = new DamnValuableVotes(1500000 ether);
         simpleGovernance = new SimpleGovernance(dvtVotes);
-
         target = new Attack(simpleGovernance);
+        vm.deal(address(simpleGovernance), 1000000 ether);
     }
 }
