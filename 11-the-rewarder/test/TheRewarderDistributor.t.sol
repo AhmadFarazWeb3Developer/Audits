@@ -42,7 +42,7 @@ contract TheRewarderDistributorTest is UtilsTest {
         rewarderDistributor.claimRewards(claim, tokens);
         vm.stopPrank();
     }
-    
+
     function testCleanTokensWithoutAccessControl() public {
         IERC20[] memory tokens = new IERC20[](2);
         address attacker = address(0xBEEF);

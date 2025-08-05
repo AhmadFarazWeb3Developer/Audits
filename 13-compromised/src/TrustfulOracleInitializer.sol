@@ -5,7 +5,6 @@ pragma solidity =0.8.25;
 import {TrustfulOracle} from "./TrustfulOracle.sol";
 
 contract TrustfulOracleInitializer {
-    
     event NewTrustfulOracle(address oracleAddress);
 
     TrustfulOracle public oracle;
