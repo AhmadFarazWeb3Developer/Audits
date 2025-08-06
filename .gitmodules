@@ -85,6 +85,9 @@
 [submodule "13-compromised/lib/solady"]
 	path = 13-compromised/lib/solady
 	url = https://github.com/vectorized/solady
-[submodule "14-puppet-v1/lib/forge-std"]
-	path = 14-puppet-v1/lib/forge-std
+[submodule "14-puppet/lib/forge-std"]
+	path = 14-puppet/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "14-puppet/lib/openzeppelin-contracts"]
+	path = 14-puppet/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
