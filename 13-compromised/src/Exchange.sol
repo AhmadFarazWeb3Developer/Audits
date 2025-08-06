@@ -23,6 +23,7 @@ contract Exchange is ReentrancyGuard {
 
     constructor(address _oracle) payable {
         token = new DamnValuableNFT();
+        // allow user to leave their own role , why he is doing ?
         token.renounceOwnership();
         oracle = TrustfulOracle(_oracle);
     }
@@ -34,21 +35,21 @@ contract Exchange is ReentrancyGuard {
 
         // Price should be in [wei / NFT]
         uint256 price = oracle.getMedianPrice(token.symbol());
+
         if (msg.value < price) {
             revert InvalidPayment();
         }
 
-
-// e minting NFT
+        // e minting NFT
         id = token.safeMint(msg.sender);
-// q where this value is going ?
+
         unchecked {
+            // e sending extra payment back
             payable(msg.sender).sendValue(msg.value - price);
         }
 
         emit TokenBought(msg.sender, id, price);
     }
-
 
     function sellOne(uint256 id) external nonReentrant {
         if (msg.sender != token.ownerOf(id)) {

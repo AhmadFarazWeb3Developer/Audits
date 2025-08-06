@@ -2,6 +2,7 @@
 // Damn Vulnerable DeFi v4 (https://damnvulnerabledefi.xyz)
 pragma solidity =0.8.25;
 
+
 import {TrustfulOracle} from "./TrustfulOracle.sol";
 
 contract TrustfulOracleInitializer {

@@ -5,14 +5,17 @@ pragma solidity =0.8.25;
 import {AccessControlEnumerable} from "@openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol";
 import {LibSort} from "solady/utils/LibSort.sol";
 
+import {Test, console2} from "forge-std/Test.sol";
 /**
  * @notice A price oracle with a number of trusted sources that individually report prices for symbols.
  *         The oracle's price for a given symbol is the median price of the symbol over all sources.
  */
-contract TrustfulOracle is AccessControlEnumerable {
-
+contract TrustfulOracle is AccessControlEnumerable, Test {
     uint256 public constant MIN_SOURCES = 1;
-    bytes32 public constant TRUSTED_SOURCE_ROLE = keccak256("TRUSTED_SOURCE_ROLE");
+// e trusted source 
+    bytes32 public constant TRUSTED_SOURCE_ROLE =
+        keccak256("TRUSTED_SOURCE_ROLE");
+// e intilizer role means ? 
     bytes32 public constant INITIALIZER_ROLE = keccak256("INITIALIZER_ROLE");
 
     // Source address => (symbol => price)
@@ -20,14 +23,19 @@ contract TrustfulOracle is AccessControlEnumerable {
 
     error NotEnoughSources();
 
-    event UpdatedPrice(address indexed source, string indexed symbol, uint256 oldPrice, uint256 newPrice);
+    event UpdatedPrice(
+        address indexed source,
+        string indexed symbol,
+        uint256 oldPrice,
+        uint256 newPrice
+    );
 
     constructor(address[] memory sources, bool enableInitialization) {
         if (sources.length < MIN_SOURCES) {
             revert NotEnoughSources();
         }
 
-        for (uint256 i = 0; i < sources.length;) {
+        for (uint256 i = 0; i < sources.length; ) {
             unchecked {
                 _grantRole(TRUSTED_SOURCE_ROLE, sources[i]);
                 ++i;
@@ -39,33 +47,46 @@ contract TrustfulOracle is AccessControlEnumerable {
     }
 
     // A handy utility allowing the deployer to setup initial prices (only once)
-    function setupInitialPrices(address[] calldata sources, string[] calldata symbols, uint256[] calldata prices)
-        external
-        onlyRole(INITIALIZER_ROLE)
-    {
+    function setupInitialPrices(
+        address[] calldata sources,
+        string[] calldata symbols,
+        uint256[] calldata prices
+    ) external onlyRole(INITIALIZER_ROLE) {
         // Only allow one (symbol, price) per source
-        require(sources.length == symbols.length && symbols.length == prices.length);
-        for (uint256 i = 0; i < sources.length;) {
+        require(
+            sources.length == symbols.length && symbols.length == prices.length
+        );
+
+        for (uint256 i = 0; i < sources.length; ) {
+            console2.log(prices[i]);
             unchecked {
                 _setPrice(sources[i], symbols[i], prices[i]);
                 ++i;
             }
         }
+        // q why revoking role ?
         renounceRole(INITIALIZER_ROLE, msg.sender);
     }
 
-    function postPrice(string calldata symbol, uint256 newPrice) external onlyRole(TRUSTED_SOURCE_ROLE) {
+    function postPrice(
+        string calldata symbol,
+        uint256 newPrice
+    ) external onlyRole(TRUSTED_SOURCE_ROLE) {
         _setPrice(msg.sender, symbol, newPrice);
     }
 
-    function getMedianPrice(string calldata symbol) external view returns (uint256) {
+    function getMedianPrice(
+        string calldata symbol
+    ) external view returns (uint256) {
         return _computeMedianPrice(symbol);
     }
 
-    function getAllPricesForSymbol(string memory symbol) public view returns (uint256[] memory prices) {
+    function getAllPricesForSymbol(
+        string memory symbol
+    ) public view returns (uint256[] memory prices) {
         uint256 numberOfSources = getRoleMemberCount(TRUSTED_SOURCE_ROLE);
         prices = new uint256[](numberOfSources);
-        for (uint256 i = 0; i < numberOfSources;) {
+        for (uint256 i = 0; i < numberOfSources; ) {
             address source = getRoleMember(TRUSTED_SOURCE_ROLE, i);
             prices[i] = getPriceBySource(symbol, source);
             unchecked {
@@ -74,19 +95,28 @@ contract TrustfulOracle is AccessControlEnumerable {
         }
     }
 
-    function getPriceBySource(string memory symbol, address source) public view returns (uint256) {
+    function getPriceBySource(
+        string memory symbol,
+        address source
+    ) public view returns (uint256) {
         return _pricesBySource[source][symbol];
     }
-// q private is not private can be accessed and exploited ?
-    function _setPrice(address source, string memory symbol, uint256 newPrice) private {
+    // q private is not private can be accessed and exploited ?
+    function _setPrice(
+        address source,
+        string memory symbol,
+        uint256 newPrice
+    ) private {
         uint256 oldPrice = _pricesBySource[source][symbol];
         _pricesBySource[source][symbol] = newPrice;
         emit UpdatedPrice(source, symbol, oldPrice, newPrice);
     }
 
-    function _computeMedianPrice(string memory symbol) private view returns (uint256) {
+    function _computeMedianPrice(
+        string memory symbol
+    ) private view returns (uint256) {
         uint256[] memory prices = getAllPricesForSymbol(symbol);
-       
+
         LibSort.insertionSort(prices);
         if (prices.length % 2 == 0) {
             uint256 leftPrice = prices[(prices.length / 2) - 1];

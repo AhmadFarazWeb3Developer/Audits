@@ -11,5 +11,13 @@ contract TrustfulOracleInitializerTest is UtilsTest {
 
     function testOracle() public view {
         trustfulOracle.getAllPricesForSymbol("DVNFT");
+        trustfulOracle.getPriceBySource("DVNFT", source1);
+        trustfulOracle.getMedianPrice("DVNFT");
     }
+
+    function testPostPrice() public {
+        trustfulOracle.postPrice("DVNFT", 1000 ether);
+    }
+
+    
 }
