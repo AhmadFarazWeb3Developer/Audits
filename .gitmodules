@@ -91,3 +91,6 @@
 [submodule "14-puppet/lib/openzeppelin-contracts"]
 	path = 14-puppet/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "14-puppet/lib/solmate"]
+	path = 14-puppet/lib/solmate
+	url = https://github.com/transmissions11/solmate
