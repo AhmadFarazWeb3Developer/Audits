@@ -94,3 +94,21 @@
 [submodule "14-puppet/lib/solmate"]
 	path = 14-puppet/lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "15-puppetV2/lib/forge-std"]
+	path = 15-puppetV2/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "16-puppetV3/lib/forge-std"]
+	path = 16-puppetV3/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "16-free-rider/lib/forge-std"]
+	path = 16-free-rider/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "17-free-rider/lib/forge-std"]
+	path = 17-free-rider/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "17-free-rider/lib/solady"]
+	path = 17-free-rider/lib/solady
+	url = https://github.com/vectorized/solady
+[submodule "17-free-rider/lib/openzeppelin-contracts"]
+	path = 17-free-rider/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
