@@ -21,7 +21,12 @@ contract FreeRiderRecoveryManager is ReentrancyGuard, IERC721Receiver {
     error InvalidTokenID(uint256 tokenId);
     error StillNotOwningToken(uint256 tokenId);
 
-    constructor(address _beneficiary, address _nft, address owner, uint256 _bounty) payable {
+    constructor(
+        address _beneficiary,
+        address _nft,
+        address owner,
+        uint256 _bounty
+    ) payable {
         if (msg.value != _bounty) {
             revert NotEnoughFunds();
         }
@@ -32,12 +37,12 @@ contract FreeRiderRecoveryManager is ReentrancyGuard, IERC721Receiver {
     }
 
     // Read https://eips.ethereum.org/EIPS/eip-721 for more info on this function
-    function onERC721Received(address, address, uint256 _tokenId, bytes memory _data)
-        external
-        override
-        nonReentrant
-        returns (bytes4)
-    {
+    function onERC721Received(
+        address,
+        address,
+        uint256 _tokenId,
+        bytes memory _data
+    ) external override nonReentrant returns (bytes4) {
         if (msg.sender != address(nft)) {
             revert CallerNotNFT();
         }

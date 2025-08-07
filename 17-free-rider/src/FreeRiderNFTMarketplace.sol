@@ -30,7 +30,7 @@ contract FreeRiderNFTMarketplace is ReentrancyGuard {
         DamnValuableNFT _token = new DamnValuableNFT();
         _token.renounceOwnership();
         for (uint256 i = 0; i < amount; ) {
-            _token.safeMint(msg.sender);
+            _token.safeMint(msg.sender); // @audit , marketpalace should be the nft holder, not the deloyer of contract
             unchecked {
                 ++i;
             }
@@ -103,6 +103,7 @@ contract FreeRiderNFTMarketplace is ReentrancyGuard {
         }
 
         if (msg.value < priceToPay) {
+            // @bug for single price 6 NFTs ?
             revert InsufficientPayment();
         }
 
@@ -110,6 +111,7 @@ contract FreeRiderNFTMarketplace is ReentrancyGuard {
 
         // transfer from seller to buyer
         DamnValuableNFT _token = token; // cache for gas savings
+
         _token.safeTransferFrom(_token.ownerOf(tokenId), msg.sender, tokenId);
 
         // pay seller using cached token
