@@ -36,6 +36,7 @@ contract PuppetPool is ReentrancyGuard {
         uint256 amount,
         address recipient
     ) external payable nonReentrant {
+        // e deposit double ETH than tokens
         uint256 depositRequired = calculateDepositRequired(amount);
 
         if (msg.value < depositRequired) {

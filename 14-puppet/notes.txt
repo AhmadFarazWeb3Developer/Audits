@@ -1,0 +1,23 @@
+============================ Uniswap V1 : ETH - ERC20s ==============================
+
+-> UniswapV1Exchange is responsible for token listing, swapping, buying, selling, adding liquidity, remove liquidity etc. 
+Each exchange contract holds one token at a time against the deposited ETH.
+
+-> UniswapV1Factory is a registory, which tracks the entire exchanges contracts and from where any one can check which exchange 
+holds how much amount of ERC20s.
+
+
+
+steps to work with uniswap uniswap V1 
+
+1. create token.
+2. create exchange contract.
+3. pass token to exchange contract.
+4. registor the exchange contract on factory.
+5. now tracks all the exchanges foe each token.
+
+
+
+
+NOTE: Dont think exchange as we think, here the exchange is single contract against each contract which is basically the pool 
+where deposite equal number of ETH and get same amount of ERC20s, 1:1 ratio.
