@@ -56,6 +56,7 @@ contract Resolver is IERC721Receiver, IERC3156FlashBorrower {
         }
 
         // Repay flash loan
+        
         payable(msg.sender).sendValue(amount);
 
         return keccak256("ERC3156FlashBorrower.onFlashLoan");

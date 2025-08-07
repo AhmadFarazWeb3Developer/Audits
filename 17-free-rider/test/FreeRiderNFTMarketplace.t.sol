@@ -31,6 +31,6 @@ contract FreeRiderNFTMarketplaceTest is UtilsTest {
         vm.stopPrank();
 
         vm.startPrank(beneficiary, beneficiary); // sets both msg.sender and tx.origin
-        pool.flashLoan(IERC3156FlashBorrower(resolver), 15 ether * 6, "");
+        pool.flashLoan(IERC3156FlashBorrower(resolver), 15 ether, "");
     }
 }
