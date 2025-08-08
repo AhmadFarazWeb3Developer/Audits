@@ -112,3 +112,12 @@
 [submodule "17-free-rider/lib/openzeppelin-contracts"]
 	path = 17-free-rider/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "18-backdoor/lib/forge-std"]
+	path = 18-backdoor/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "18-backdoor/lib/solady"]
+	path = 18-backdoor/lib/solady
+	url = https://github.com/vectorized/solady
+[submodule "18-backdoor/lib/openzeppelin-contracts"]
+	path = 18-backdoor/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
