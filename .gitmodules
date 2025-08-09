@@ -121,3 +121,9 @@
 [submodule "18-backdoor/lib/openzeppelin-contracts"]
 	path = 18-backdoor/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "18-backdoor/lib/safe-smart-account"]
+	path = 18-backdoor/lib/safe-smart-account
+	url = https://github.com/safe-global/safe-smart-account
+[submodule "18-backdoor/lib/solmate"]
+	path = 18-backdoor/lib/solmate
+	url = https://github.com/transmissions11/solmate
