@@ -127,3 +127,6 @@
 [submodule "18-backdoor/lib/solmate"]
 	path = 18-backdoor/lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "19-climber/lib/forge-std"]
+	path = 19-climber/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
