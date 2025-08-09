@@ -8,23 +8,27 @@ import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {Safe} from "safe-smart-account/contracts/Safe.sol";
+import {Safe} from "safe-smart-account/contracts/Safe.sol"; // actual smart wallet
 
-import {SafeProxy} from "safe-smart-account/contracts/proxies/SafeProxy.sol";
-import {IProxyCreationCallback} from "safe-smart-account/contracts/proxies/IProxyCreationCallback.sol";
+import {SafeProxy} from "safe-smart-account/contracts/proxies/SafeProxy.sol"; // delegate calls to different version of singlton smart wallet
+
+import {SafeProxyFactory} from "safe-smart-account/contracts/proxies/SafeProxyFactory.sol"; // Register the Safeproxies
 
 /**
  * @notice A registry for Safe multisig wallets.
  *         When known beneficiaries deploy and register their wallets, the registry awards tokens to the wallet.
  * @dev The registry has embedded verifications to ensure only legitimate Safe wallets are stored.
  */
-contract WalletRegistry is IProxyCreationCallback, Ownable {
+contract WalletRegistry is Ownable {
     uint256 private constant EXPECTED_OWNERS_COUNT = 1;
     uint256 private constant EXPECTED_THRESHOLD = 1;
     uint256 private constant PAYMENT_AMOUNT = 10e18;
 
+    // e actual smart wallet
     address public immutable singletonCopy;
+    // e proxy factory hold proxies
     address public immutable walletFactory;
+
     IERC20 public immutable token;
 
     mapping(address => bool) public beneficiaries;
@@ -73,7 +77,7 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
         address singleton,
         bytes calldata initializer,
         uint256
-    ) external override {
+    ) external {
         if (token.balanceOf(address(this)) < PAYMENT_AMOUNT) {
             // fail early
             revert NotEnoughFunds();
