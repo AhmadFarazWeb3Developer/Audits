@@ -8,9 +8,9 @@ import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {Safe} from "safe-smart-account/contracts/Safe.sol"; // actual smart wallet
+import {Safe} from "safe-smart-account/contracts/Safe.sol"; // Safe (Singleton)
 
-import {SafeProxy} from "safe-smart-account/contracts/proxies/SafeProxy.sol"; // delegate calls to different version of singlton smart wallet
+import {SafeProxy} from "safe-smart-account/contracts/proxies/SafeProxy.sol"; // actual wallet address
 
 import {SafeProxyFactory} from "safe-smart-account/contracts/proxies/SafeProxyFactory.sol"; // Register the Safeproxies
 
@@ -47,14 +47,14 @@ contract WalletRegistry is Ownable {
 
     constructor(
         address singletonCopyAddress,
-        address walletFactoryAddress,
+        address walletFactoryAddress, 
         address tokenAddress,
         address[] memory initialBeneficiaries
     ) {
         _initializeOwner(msg.sender);
 
         singletonCopy = singletonCopyAddress;
-        walletFactory = walletFactoryAddress;
+        walletFactory = walletFactoryAddress; // safe proxy factory
         token = IERC20(tokenAddress);
 
         for (uint256 i = 0; i < initialBeneficiaries.length; ++i) {

@@ -33,16 +33,30 @@ contract WalletRegistryTest is UtilsTest {
             alice
         );
 
-        SafeProxy newProxy = proxyFactory.createProxyWithNonce(
+        // creating the actual wallet via Proxy Factory
+        SafeProxy proxy = proxyFactory.createProxyWithNonce(
             address(smartWallet),
             initializer,
             0 // saltNonce
         );
+
         walletRegistry.proxyCreated(
-            newProxy,
+            proxy,
             address(smartWallet),
             initializer,
             0
         );
+
+        vm.stopPrank();
+        token.balanceOf(address(proxy));
+
+        // vm.startPrank(address(proxy));
+        // token.approve(address(proxy), 10 ether);
+        // token.transferFrom(address(proxy), charlie, 10 ether);
+        // token.balanceOf(charlie);
+    }
+
+    function testAttack() public {
+        backdoor.attack();
     }
 }

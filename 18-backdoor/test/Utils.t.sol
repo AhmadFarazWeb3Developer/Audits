@@ -7,7 +7,7 @@ import {SafeProxy} from "safe-smart-account/contracts/proxies/SafeProxy.sol"; //
 import {SafeProxyFactory} from "safe-smart-account/contracts/proxies/SafeProxyFactory.sol"; // Register the Safeproxies
 import {WalletRegistry} from "../src/WalletRegistry.sol";
 import {DamnValuableToken} from "../src/DamnValuableToken.sol";
-
+import {BackdoorExploit} from "./Attack.sol";
 contract UtilsTest is Test {
     Safe smartWallet;
     SafeProxy proxy;
@@ -15,14 +15,17 @@ contract UtilsTest is Test {
     WalletRegistry walletRegistry;
     DamnValuableToken token;
 
+    BackdoorExploit backdoor;
     address alice;
     address bob;
     address charlie;
     address david;
 
     function setUp() public virtual {
+        // Safe Singleton (depolyed once)
         smartWallet = new Safe();
-        proxy = new SafeProxy(address(smartWallet));
+
+        // Create proxies (the actual wallet using Safe)
         proxyFactory = new SafeProxyFactory();
 
         token = new DamnValuableToken();
@@ -48,5 +51,15 @@ contract UtilsTest is Test {
 
         token.transfer(address(walletRegistry), 40 ether);
         token.approve(address(walletRegistry), type(uint256).max);
+
+        backdoor = new BackdoorExploit(
+            smartWallet,
+            proxyFactory,
+            token,
+            walletRegistry,
+            beneficiaries,
+            alice,
+            40 ether
+        );
     }
 }
