@@ -142,3 +142,30 @@
 [submodule "19-climber/lib/solmate"]
 	path = 19-climber/lib/solmate
 	url = https://github.com/transmissions11/solmate
+[submodule "20-wallet-mining/lib/forge-std"]
+	path = 20-wallet-mining/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "20-wallet-mining/lib/safe-contracts"]
+	path = 20-wallet-mining/lib/safe-contracts
+	url = https://github.com/safe-global/safe-contracts
+[submodule "20-wallet-mining/lib/openzeppelin-contracts"]
+	path = 20-wallet-mining/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "20-wallet-mining/lib/safe-smart-account"]
+	path = 20-wallet-mining/lib/safe-smart-account
+	url = https://github.com/safe-global/safe-smart-account
+[submodule "21-abi-smuggling/lib/forge-std"]
+	path = 21-abi-smuggling/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "21-abi-smuggling/lib/solady"]
+	path = 21-abi-smuggling/lib/solady
+	url = https://github.com/vectorized/solady
+[submodule "21-abi-smuggling/lib/openzeppelin-contracts"]
+	path = 21-abi-smuggling/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "22-shrads/lib/forge-std"]
+	path = 22-shrads/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "23-withdrawal/lib/forge-std"]
+	path = 23-withdrawal/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
