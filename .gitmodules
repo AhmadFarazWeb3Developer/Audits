@@ -130,3 +130,15 @@
 [submodule "19-climber/lib/forge-std"]
 	path = 19-climber/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "19-climber/lib/openzeppelin-contracts"]
+	path = 19-climber/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "19-climber/lib/solady"]
+	path = 19-climber/lib/solady
+	url = https://github.com/vectorized/solady
+[submodule "19-climber/lib/openzeppelin-contracts-upgradeable"]
+	path = 19-climber/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
+[submodule "19-climber/lib/solmate"]
+	path = 19-climber/lib/solmate
+	url = https://github.com/transmissions11/solmate
