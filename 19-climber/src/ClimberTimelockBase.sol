@@ -6,6 +6,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
 abstract contract ClimberTimelockBase is AccessControl {
     // Possible states for an operation in this timelock contract
+
     enum OperationState {
         Unknown,
         Scheduled,
@@ -25,7 +26,9 @@ abstract contract ClimberTimelockBase is AccessControl {
 
     uint64 public delay;
 
-    function getOperationState(bytes32 id) public view returns (OperationState state) {
+    function getOperationState(
+        bytes32 id
+    ) public view returns (OperationState state) {
         Operation memory op = operations[id];
 
         if (op.known) {

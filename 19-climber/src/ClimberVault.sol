@@ -31,20 +31,30 @@ contract ClimberVault is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         _disableInitializers();
     }
 
-    function initialize(address admin, address proposer, address sweeper) external initializer {
+    // unable to intialize ?
+    function initialize(
+        address admin,
+        address proposer,
+        address sweeper
+    ) external initializer {
         // Initialize inheritance chain
+
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
 
         // Deploy timelock and transfer ownership to it
-        transferOwnership(address(new ClimberTimelock(admin, proposer)));
+        transferOwnership(address(new ClimberTimelock(admin, proposer))); // v2 deployment
 
         _setSweeper(sweeper);
         _updateLastWithdrawalTimestamp(block.timestamp);
     }
 
     // Allows the owner to send a limited amount of tokens to a recipient every now and then
-    function withdraw(address token, address recipient, uint256 amount) external onlyOwner {
+    function withdraw(
+        address token,
+        address recipient,
+        uint256 amount
+    ) external onlyOwner {
         if (amount > WITHDRAWAL_LIMIT) {
             revert InvalidWithdrawalAmount();
         }
@@ -60,7 +70,11 @@ contract ClimberVault is Initializable, OwnableUpgradeable, UUPSUpgradeable {
 
     // Allows trusted sweeper account to retrieve any tokens
     function sweepFunds(address token) external onlySweeper {
-        SafeTransferLib.safeTransfer(token, _sweeper, IERC20(token).balanceOf(address(this)));
+        SafeTransferLib.safeTransfer(
+            token,
+            _sweeper,
+            IERC20(token).balanceOf(address(this))
+        );
     }
 
     function getSweeper() external view returns (address) {
@@ -80,5 +94,7 @@ contract ClimberVault is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     }
 
     // By marking this internal function with `onlyOwner`, we only allow the owner account to authorize an upgrade
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
 }

@@ -47,7 +47,7 @@ contract WalletRegistry is Ownable {
 
     constructor(
         address singletonCopyAddress,
-        address walletFactoryAddress, 
+        address walletFactoryAddress,
         address tokenAddress,
         address[] memory initialBeneficiaries
     ) {

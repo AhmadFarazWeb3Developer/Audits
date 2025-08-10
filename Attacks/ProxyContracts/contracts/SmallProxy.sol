@@ -3,8 +3,10 @@ pragma solidity 0.8.22;
 
 import "@openzeppelin/contracts/proxy/Proxy.sol";
 contract SmallProxy is Proxy {
+
     bytes32 private constant _IMPLEMENTATION_SLOT =
         0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
+    
     function setImplementation(address _newImplementation) public {
         assembly {
             sstore(_IMPLEMENTATION_SLOT, _newImplementation)
@@ -27,6 +29,7 @@ contract SmallProxy is Proxy {
     ) public pure returns (bytes memory) {
         return abi.encodeWithSignature("setValue", _numberToUpdate);
     }
+    
     function readStorage()
         public
         view
