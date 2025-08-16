@@ -6,22 +6,13 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {ClimberTimelockBase} from "./ClimberTimelockBase.sol";
 import {ADMIN_ROLE, PROPOSER_ROLE, MAX_TARGETS, MIN_TARGETS, MAX_DELAY} from "./ClimberConstants.sol";
 
-import {
-    InvalidTargetsCount,
-    InvalidDataElementsCount,
-    InvalidValuesCount,
-    OperationAlreadyKnown,
-    NotReadyForExecution,
-    CallerNotTimelock,
-    NewDelayAboveMax
-} from "./ClimberErrors.sol";
+import {InvalidTargetsCount, InvalidDataElementsCount, InvalidValuesCount, OperationAlreadyKnown, NotReadyForExecution, CallerNotTimelock, NewDelayAboveMax} from "./ClimberErrors.sol";
 
 /**
  * @title ClimberTimelock
  * @author
  */
 contract ClimberTimelock is ClimberTimelockBase {
-    
     using Address for address;
 
     /**
@@ -30,9 +21,11 @@ contract ClimberTimelock is ClimberTimelockBase {
      * @param proposer address of the account that will hold the PROPOSER_ROLE role
      */
     constructor(address admin, address proposer) {
+        // e means two admins
         _setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
         _setRoleAdmin(PROPOSER_ROLE, ADMIN_ROLE);
 
+        //e granted role to three ?
         _grantRole(ADMIN_ROLE, admin);
         _grantRole(ADMIN_ROLE, address(this)); // self administration
         _grantRole(PROPOSER_ROLE, proposer);
@@ -71,10 +64,12 @@ contract ClimberTimelock is ClimberTimelockBase {
     /**
      * Anyone can execute what's been scheduled via `schedule`
      */
-    function execute(address[] calldata targets, uint256[] calldata values, bytes[] calldata dataElements, bytes32 salt)
-        external
-        payable
-    {
+    function execute(
+        address[] calldata targets,
+        uint256[] calldata values,
+        bytes[] calldata dataElements,
+        bytes32 salt
+    ) external payable {
         if (targets.length <= MIN_TARGETS) {
             revert InvalidTargetsCount();
         }
@@ -100,6 +95,7 @@ contract ClimberTimelock is ClimberTimelockBase {
         operations[id].executed = true;
     }
 
+    // q who can update this ?
     function updateDelay(uint64 newDelay) external {
         if (msg.sender != address(this)) {
             revert CallerNotTimelock();

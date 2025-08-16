@@ -38,7 +38,6 @@ contract ClimberVault is Initializable, OwnableUpgradeable, UUPSUpgradeable {
         address sweeper
     ) external initializer {
         // Initialize inheritance chain
-
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
 
