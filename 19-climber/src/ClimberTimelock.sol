@@ -64,6 +64,7 @@ contract ClimberTimelock is ClimberTimelockBase {
     /**
      * Anyone can execute what's been scheduled via `schedule`
      */
+
     function execute(
         address[] calldata targets,
         uint256[] calldata values,
@@ -84,9 +85,12 @@ contract ClimberTimelock is ClimberTimelockBase {
 
         bytes32 id = getOperationId(targets, values, dataElements, salt);
 
+        // @audit critical update first
         for (uint8 i = 0; i < targets.length; ++i) {
             targets[i].functionCallWithValue(dataElements[i], values[i]);
         }
+
+        // check later state
 
         if (getOperationState(id) != OperationState.ReadyForExecution) {
             revert NotReadyForExecution(id);

@@ -20,12 +20,9 @@ abstract contract UtilsTest is Test {
 
     function setUp() public virtual {
         valut = new ClimberVault();
-
         token = new DamnValuableToken();
 
-        token.transfer(address(valut), 10000 ether);
-        token.approve(address(valut), 10000 ether);
-
+        vm.startPrank(admin);
         erc1967Proxy = new ERC1967Proxy(
             address(valut),
             abi.encodeWithSelector(
@@ -35,5 +32,17 @@ abstract contract UtilsTest is Test {
                 sweeper
             )
         );
+
+        vm.stopPrank();
+
+        ClimberVault proxy = ClimberVault(address(erc1967Proxy));
+
+        address timelockAddr = proxy.owner();
+        climberTimelock = ClimberTimelock(payable(timelockAddr));
+
+        // tokens should be sent to the proxy not to the vault, because the storage sets in proxy for amount of balance etc.
+        // users interact with proxy not with implementation direclty
+        token.transfer(address(erc1967Proxy), 10000 ether);
+        token.approve(address(erc1967Proxy), 10000 ether);
     }
 }
