@@ -49,12 +49,11 @@ contract ClimberVaultTest is UtilsTest {
     }
 
     function test_Attack() public {
-
         address recovery = makeAddr("recovery Address");
         Attack attacker = new Attack(
-            valut,
+            getProxy(),
             climberTimelock,
-            DamnValuableToken(token),
+            address(token),
             recovery
         );
         attacker.attack();
