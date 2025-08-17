@@ -99,7 +99,7 @@ contract ClimberTimelock is ClimberTimelockBase {
         operations[id].executed = true;
     }
 
-    // q who can update this ?
+    // q who can update this ? no ownership
     function updateDelay(uint64 newDelay) external {
         if (msg.sender != address(this)) {
             revert CallerNotTimelock();

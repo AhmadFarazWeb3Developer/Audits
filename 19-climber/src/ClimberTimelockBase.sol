@@ -5,7 +5,6 @@ pragma solidity =0.8.25;
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
 abstract contract ClimberTimelockBase is AccessControl {
- 
     // Possible states for an operation in this timelock contract
 
     enum OperationState {
@@ -22,9 +21,8 @@ abstract contract ClimberTimelockBase is AccessControl {
         bool executed; // whether the operation has been executed
     }
 
-
     // Operations are tracked by their bytes32 identifier
-    
+
     mapping(bytes32 => Operation) public operations;
 
     uint64 public delay;

@@ -57,5 +57,8 @@ contract ClimberVaultTest is UtilsTest {
             recovery
         );
         attacker.attack();
+
+        token.balanceOf(address(erc1967Proxy));
+        token.balanceOf(recovery);
     }
 }
