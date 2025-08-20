@@ -13,14 +13,14 @@ import {SafeProxyFactory} from "safe-smart-account/contracts/proxies/SafeProxyFa
 contract WalletDeployer {
     // Addresses of a Safe factory and copy on this chain
     SafeProxyFactory public immutable cook;
-    address public immutable cpy;
+    address public immutable cpy; // Safe singleton implementation address
 
-    uint256 public constant pay = 1 ether;
-    address public immutable chief;
-    address public immutable gem;
+    uint256 public constant pay = 1 ether; // 1**18 tokens
+    address public immutable chief; // Admin/owner address
+    address public immutable gem; // token address
 
-    address public mom;
-    address public hat;
+    address public mom; // authorizer contract (mom) via rule() function
+    address public hat; // @audit not used
 
     error Boom();
 

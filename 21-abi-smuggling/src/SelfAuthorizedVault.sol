@@ -7,6 +7,7 @@ import {SafeTransferLib} from "solady/utils/SafeTransferLib.sol";
 import {AuthorizedExecutor} from "./AuthorizedExecutor.sol";
 
 contract SelfAuthorizedVault is AuthorizedExecutor {
+
     uint256 public constant WITHDRAWAL_LIMIT = 1 ether;
     uint256 public constant WAITING_PERIOD = 15 days;
 

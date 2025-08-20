@@ -1,0 +1,26 @@
+{
+  "name": "safe-nonce-finder",
+  "version": "1.0.0",
+  "description": "Find nonce for Safe wallet deployment at specific address",
+  "main": "nonce-finder.js",
+  "scripts": {
+    "find": "node nonce-finder.js",
+    "find-parallel": "node nonceFinder.js --parallel",
+    "test": "node test-nonce-finder.js"
+  },
+  "dependencies": {
+    "ethers": "^5.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0"
+  },
+  "keywords": [
+    "ethereum",
+    "safe",
+    "gnosis",
+    "nonce",
+    "create2"
+  ],
+  "author": "",
+  "license": "MIT"
+}
