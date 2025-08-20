@@ -4,6 +4,7 @@ pragma solidity =0.8.25;
 
 contract AuthorizerUpgradeable {
     uint256 public needsInit = 1;
+
     mapping(address => mapping(address => uint256)) private wards;
 
     event Rely(address indexed usr, address aim);
