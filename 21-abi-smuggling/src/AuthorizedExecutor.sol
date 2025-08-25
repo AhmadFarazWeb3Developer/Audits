@@ -9,10 +9,10 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 abstract contract AuthorizedExecutor is ReentrancyGuard {
     using Address for address;
 
-    bool public initialized;
+    bool public initialized; // 32 bytes
 
     // action identifier => allowed
-    mapping(bytes32 => bool) public permissions;
+    mapping(bytes32 => bool) public permissions; // 32 bytes
 
     error NotAllowed();
     error AlreadyInitialized();
