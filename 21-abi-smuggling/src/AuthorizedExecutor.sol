@@ -58,6 +58,7 @@ abstract contract AuthorizedExecutor is ReentrancyGuard {
         assembly {
             selector := calldataload(calldataOffset)
         }
+        console.logBytes4(selector);
 
         if (!permissions[getActionId(selector, msg.sender, target)]) {
             revert NotAllowed();
@@ -81,3 +82,12 @@ abstract contract AuthorizedExecutor is ReentrancyGuard {
         return keccak256(abi.encodePacked(selector, executor, target));
     }
 }
+
+/*
+ 0xd9caed12
+   0000000000000000000000003774dc4617020fbf907eb5538299633b1892534b -> attacker address 0x3774dc4617020fBF907Eb5538299633b1892534b
+   0000000000000000000000002e234dae75c793f67a35089c9d99245e1c58470b -> valut address 0x2e234DAe75C793f67A35089C9d99245E1C58470b
+   0000000000000000000000000000000000000000000000000000000000000060 -> referece to action data
+   000000000000000000000000000000000000000000000000000000000000004485fb709d0000000000000000000000003774dc4617020fbf907eb5538299633b1892534b0000000000000000000000005615deb798bb3e4dfa0139dfa1b3d433cc23b72f00000000000000000000000000000000000000000000000000000000
+
+ */
